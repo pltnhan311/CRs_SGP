@@ -535,7 +535,7 @@
     .product-list-card {
       background: var(--mobile-card-bg);
       border-radius: 8px;
-      margin: 8px 12px;
+      margin: 8px 4px;
       box-shadow: var(--shadow-mobile);
       border: 1px solid #f1f5f9;
       overflow: hidden;
@@ -763,7 +763,7 @@
     /* Section Cards matching screenshot */
     .section-card {
       background: #ffffff;
-      margin: 8px 12px;
+      margin: 8px 4px;
       border-radius: 8px;
       box-shadow: var(--shadow-mobile);
       overflow: hidden;
@@ -1105,13 +1105,13 @@
       padding: 0 12px;
     }
     .m-col-left {
-      flex: 1.1;
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
     .m-col-right {
-      flex: 0.9;
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -1455,7 +1455,7 @@
     // Draw customer details block
     const custCard = document.createElement('div');
     custCard.className = 'customer-card';
-    custCard.style.margin = '12px 12px 0 12px';
+    custCard.style.margin = '12px 4px 0 4px';
     custCard.innerHTML = `
       <div><strong>Customer Name:</strong> ABC FOOD PRODUCTS PTE. LTD</div>
       <div><strong>Address:</strong> 28 BIOPOLIS ROAD SINGAPORE 138568</div>
@@ -1727,8 +1727,8 @@
     leftCol.appendChild(oilCard);
     leftCol.appendChild(sugarCard);
     rightCol.appendChild(schedCard);
-    leftCol.appendChild(summaryCard);
-    leftCol.appendChild(submitContainer);
+    rightCol.appendChild(summaryCard);
+    rightCol.appendChild(submitContainer);
 
     // Unallocated modal overlay inside mobile screen
     if (s4ModalShown) {
@@ -2137,8 +2137,8 @@
     leftCol.appendChild(oilCard);
     leftCol.appendChild(sugarCard);
     rightCol.appendChild(schedCard);
-    leftCol.appendChild(summaryCard);
-    leftCol.appendChild(submitContainer);
+    rightCol.appendChild(summaryCard);
+    rightCol.appendChild(submitContainer);
 
     // Confirmation Modal for reduction
     if (s2ConfirmModalShown) {
@@ -2578,8 +2578,8 @@
     leftCol.appendChild(oilCard);
     leftCol.appendChild(sugarCard);
     rightCol.appendChild(schedCard);
-    leftCol.appendChild(summaryCard);
-    leftCol.appendChild(submitContainer);
+    rightCol.appendChild(summaryCard);
+    rightCol.appendChild(submitContainer);
 
     // Error Modal for Scenario 3 ATP check failure
     if (s3ErrorModalShown) {
@@ -3002,8 +3002,8 @@
     leftCol.appendChild(oilCard);
     leftCol.appendChild(sugarCard);
     rightCol.appendChild(schedCard);
-    leftCol.appendChild(summaryCard);
-    leftCol.appendChild(submitContainer);
+    rightCol.appendChild(summaryCard);
+    rightCol.appendChild(submitContainer);
 
     // Confirmation Modal for reduction
     if (s4ConfirmModalShown) {
