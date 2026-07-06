@@ -2064,7 +2064,7 @@
               <input type="text" class="m-qv" value="${s2Cart}" onchange="s2CartSet(this.value)">
               <button class="m-qb" onclick="s2CartCh(1)">+</button>
             </div>
-            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${oilTot} / Max: ${s2Cart}</div>` : ''}
+            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">Overallocated: ${oilDiff} BOX</div>` : ''}
           </div>
         </div>
         <div class="sub-details">
@@ -2109,7 +2109,7 @@
               <input type="text" class="m-qv" value="${s2SugarCart}" onchange="s2SugarCartSet(this.value)">
               <button class="m-qb" onclick="s2SugarCartCh(1)">+</button>
             </div>
-            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${sugarTot} / Max: ${s2SugarCart}</div>` : ''}
+            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">Overallocated: ${sugarDiff} CS</div>` : ''}
           </div>
         </div>
         <div class="sub-details">
@@ -2513,7 +2513,7 @@
               <button class="m-qb" onclick="s3CartCh(1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
             </div>
             <div style="font-size: 10px; font-weight: 700; color: ${warnColor}; text-align: right;">
-              ${totTemp > s3Cart ? `+${totTemp - s3Cart} BOX exceeds cart` : uv > 0 ? `Unallocated: ${uv} BOX` : 'Aligned'}
+              ${totTemp > s3Cart ? `Overallocated: ${totTemp - s3Cart} BOX` : uv > 0 ? `Unallocated: ${uv} BOX` : 'Aligned'}
             </div>
           </div>
         </div>
@@ -2561,7 +2561,7 @@
               <button class="m-qb" onclick="s3SugarCartCh(1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
             </div>
             <div style="font-size: 10px; font-weight: 700; color: ${sugarWarnColor}; text-align: right;">
-              ${sugarTotTemp > s3SugarCart ? `+${sugarTotTemp - s3SugarCart} CS exceeds cart` : sugarUv > 0 ? `Unallocated: ${sugarUv} CS` : 'Aligned'}
+              ${sugarTotTemp > s3SugarCart ? `Overallocated: ${sugarTotTemp - s3SugarCart} CS` : sugarUv > 0 ? `Unallocated: ${sugarUv} CS` : 'Aligned'}
             </div>
           </div>
         </div>
@@ -2936,7 +2936,7 @@
                 Unallocated: ${s4Cart - oilTot} BOX
               </div>
             ` : ''}
-            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${oilTot} BOX / Max: ${s4Cart} BOX</div>` : ''}
+            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">Overallocated: ${oilDiff} BOX</div>` : ''}
           </div>
         </div>
         <div class="sub-details">
@@ -2986,7 +2986,7 @@
                 Unallocated: ${s4SugarCart - sugarTot} CS
               </div>
             ` : ''}
-            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${sugarTot} CS / Max: ${s4SugarCart} CS</div>` : ''}
+            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">Overallocated: ${sugarDiff} CS</div>` : ''}
           </div>
         </div>
         <div class="sub-details">
