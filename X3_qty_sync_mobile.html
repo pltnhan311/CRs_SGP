@@ -1,0 +1,3342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Cart Qty Sync Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg-app: #0f172a; /* Slate 900 */
+      --color-background-primary: #1e293b; /* Slate 800 */
+      --color-background-secondary: #334155; /* Slate 700 */
+      --color-text-primary: #f8fafc; /* Slate 50 */
+      --color-text-secondary: #cbd5e1; /* Slate 300 */
+      --color-text-tertiary: #94a3b8; /* Slate 400 */
+      --color-border-primary: rgba(255, 255, 255, 0.05);
+      --color-border-secondary: rgba(255, 255, 255, 0.1);
+      
+      /* Mobile App Theme (Cosplay Colors) */
+      --mobile-bg: #f8fafc; /* Crisp light gray backdrop for mobile */
+      --mobile-card-bg: #ffffff;
+      --mobile-text-dark: #1e293b;
+      --mobile-text-secondary: #64748b;
+      --mobile-primary: #006994; /* Deep Teal */
+      --mobile-primary-light: #e0f2fe; /* Light Cyan */
+      
+      --mobile-bg-success: #ecfdf5;
+      --mobile-text-success: #059669;
+      --mobile-border-success: #a7f3d0;
+      
+      --mobile-bg-warning: #fffbeb;
+      --mobile-text-warning: #d97706;
+      --mobile-border-warning: #fde68a;
+      
+      --mobile-bg-danger: #fef2f2;
+      --mobile-text-danger: #dc2626;
+      --mobile-border-danger: #fca5a5;
+
+      --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      --shadow-mobile: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    body.light {
+      --color-bg-app: #f1f5f9; /* Slate 100 */
+      --color-background-primary: rgba(255, 255, 255, 0.85);
+      --color-background-secondary: rgba(0, 0, 0, 0.03);
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-tertiary: #64748b;
+      --color-border-primary: rgba(15, 23, 42, 0.05);
+      --color-border-secondary: rgba(15, 23, 42, 0.08);
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 12px;
+      background-color: #020617;
+      background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 50%, #020617 100%);
+      background-attachment: fixed;
+      color: var(--color-text-primary);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.light {
+      background-color: #f8fafc;
+      background-image: radial-gradient(circle at 50% 0%, #e0e7ff 0%, #f1f5f9 60%, #f8fafc 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1020px;
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.85));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 32px 24px;
+      box-shadow: 0 40px 100px -25px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    body.light .container {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(241, 245, 249, 0.9));
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: 0 40px 100px -25px rgba(15, 23, 42, 0.15);
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 16px;
+    }
+
+    body.light .header-bar {
+      border-color: rgba(15, 23, 42, 0.05);
+    }
+
+    h2.title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.light h2.title {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2.title::after {
+      content: 'Mobile Cosplay';
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      background: #0284c7;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: var(--color-background-secondary);
+      border: 1px solid var(--color-border-secondary);
+      color: var(--color-text-primary);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--color-text-tertiary);
+      color: var(--color-bg-app);
+      transform: scale(1.05);
+    }
+
+    body.light .theme-toggle .sun { display: none; }
+    body.light .theme-toggle .moon { display: block; }
+    body:not(.light) .theme-toggle .sun { display: block; }
+    body:not(.light) .theme-toggle .moon { display: none; }
+
+    /* Simulator Switchers */
+    /* Sidebar Layout Wrapper */
+    .workspace-layout {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 840px) {
+      .workspace-layout {
+        flex-direction: column;
+      }
+    }
+
+    /* Left Sidebar */
+    .sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 340px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
+    }
+
+    @media (max-width: 840px) {
+      .sidebar-panel {
+        width: 100%;
+        position: static;
+      }
+    }
+
+    .sidebar-section {
+      background: var(--color-background-secondary);
+      border: 1px solid var(--color-border-primary);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-section-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-tertiary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Vertical tabs switcher */
+    .tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .tab {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    body.light .tab {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .tab:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--color-text-primary);
+    }
+
+    body.light .tab:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .tab.on {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    /* Vertical Stock availability selector */
+    .atp-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .atp-opt {
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: normal;
+      line-height: 1.35;
+    }
+
+    body.light .atp-opt {
+      border-color: rgba(0, 0, 0, 0.04);
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .atp-opt:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--color-text-primary);
+    }
+
+    body.light .atp-opt:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .atp-opt.active {
+      background: #0ea5e9;
+      color: #ffffff;
+      border-color: #0ea5e9;
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+    }
+
+    .sc-desc {
+      font-size: 11.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      padding: 2px 0 2px 10px;
+      border-left: 3px solid #0284c7;
+      margin: 0;
+    }
+
+    .sim-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .sim-btn {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sim-btn:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+
+    /* Layout: Device on Center */
+    .simulator-workspace {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+      width: 100%;
+    }
+
+    /* Simulating Mobile Viewport Container Box (Premium Smartphone Frame) */
+    .mobile-viewport {
+      width: 100%;
+      max-width: 410px;
+      background: var(--mobile-bg);
+      border: 10px solid #1e293b; /* Dark metal frame bezel */
+      outline: 1.5px solid rgba(255, 255, 255, 0.08); /* Bezel highlight accent */
+      border-radius: 38px; /* Smooth physical rounded corners */
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 4px 20px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin: 10px 0;
+      position: relative;
+    }
+
+    body.light .mobile-viewport {
+      border-color: #cbd5e1; /* Sleek light metal bezel */
+      outline: 1.5px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.15), 0 4px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Mobile Screen Container */
+    .screen-content {
+      background: var(--mobile-bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-bottom: 20px;
+      transition: background-color 0.3s;
+    }
+
+    /* App Header inside Screen */
+    .app-header {
+      height: 48px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-header .title-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--mobile-text-dark);
+    }
+
+    .app-header .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: var(--mobile-text-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Customer details card */
+    .customer-card {
+      background: var(--mobile-primary-light);
+      padding: 10px 14px;
+      font-size: 10.5px;
+      color: var(--mobile-primary);
+      line-height: 1.4;
+      border-bottom: 1px solid rgba(0, 105, 148, 0.1);
+    }
+
+    .customer-card div strong {
+      color: #0c4a6e;
+    }
+
+    /* Mobile Warning/Guide Banner */
+    .m-banner {
+      margin: 8px 12px 4px 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 10px;
+      line-height: 1.4;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .m-banner.warn {
+      background: var(--mobile-bg-warning);
+      color: var(--mobile-text-warning);
+      border-color: var(--mobile-border-warning);
+    }
+
+    .m-banner.err {
+      background: var(--mobile-bg-danger);
+      color: var(--mobile-text-danger);
+      border-color: var(--mobile-border-danger);
+    }
+
+    .m-banner.ok {
+      background: var(--mobile-bg-success);
+      color: var(--mobile-text-success);
+      border-color: var(--mobile-border-success);
+    }
+
+    /* Floating Toast Notification in Mobile Screen */
+    .m-toast {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 86%;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      animation: mToastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+
+    .m-toast.warn {
+      background: #fffbeb; /* Light amber */
+      border: 1px solid #f59e0b; /* Amber border */
+    }
+
+    .m-toast.success {
+      background: #f0fdf4; /* Light green */
+      border: 1px solid #10b981; /* Green border */
+    }
+
+    .m-toast.error {
+      background: #fef2f2; /* Light red */
+      border: 1px solid #ef4444; /* Red border */
+    }
+
+    /* Text styles inside toast */
+    .m-toast-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      text-align: left;
+    }
+
+    .m-toast-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.3;
+    }
+
+    .m-toast-subtitle {
+      font-size: 10px;
+      font-weight: 500;
+      color: #4b5563;
+      line-height: 1.3;
+    }
+
+    .m-toast-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @keyframes mToastIn {
+      from { opacity: 0; transform: translate(-50%, -10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    /* Product card list styling matching screenshot */
+    .product-list-card {
+      background: var(--mobile-card-bg);
+      border-radius: 8px;
+      margin: 8px 12px;
+      box-shadow: var(--shadow-mobile);
+      border: 1px solid #f1f5f9;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-row {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      position: relative;
+    }
+
+    .product-row:last-child {
+      border-bottom: none;
+    }
+
+    .product-main {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .trash-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #fee2e2;
+      border: none;
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .trash-btn:hover {
+      background: #fecaca;
+    }
+
+    .product-img {
+      width: 44px;
+      height: 44px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .product-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--mobile-text-dark);
+      line-height: 1.3;
+    }
+
+    .product-brand {
+      font-size: 9px;
+      color: var(--mobile-text-secondary);
+    }
+
+    /* Pack size box */
+    .pack-size-box {
+      border: 1px solid #e0f2fe;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 9px;
+      font-weight: 600;
+      color: #0284c7;
+      background: #f0f9ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Status badge tags */
+    .status-tag {
+      width: fit-content;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      border: 1px solid;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-tag.ok {
+      background: #f0fdf4;
+      color: #15803d;
+      border-color: #bbf7d0;
+    }
+
+    .status-tag.warn {
+      background: #fffbeb;
+      color: #d97706;
+      border-color: #fde68a;
+    }
+
+    .status-tag.fail {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fee2e2;
+    }
+
+    .price-qty-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .price-section {
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+    }
+
+    .price-uom {
+      font-size: 8.5px;
+      color: var(--mobile-text-secondary);
+      margin-bottom: 2px;
+    }
+
+    .price-main {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .price-old {
+      font-size: 10.5px;
+      color: var(--mobile-text-secondary);
+      text-decoration: line-through;
+      font-weight: 400;
+    }
+
+    /* Total block */
+    .total-box {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+      width: fit-content;
+    }
+
+    /* Mobile Quantity selectors */
+    .m-qc {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .m-qb {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background: #0f4e54;
+      color: #ffffff;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .m-qb:disabled {
+      background: #e2e8f0;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .m-qv {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      width: 40px;
+      height: 28px;
+      text-align: center;
+      background: #ffffff;
+      color: var(--mobile-text-dark);
+    }
+
+    /* Sub details inside product cards */
+    .sub-details {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 9px;
+      color: var(--mobile-text-secondary);
+    }
+
+    .sub-detail-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Section Cards matching screenshot */
+    .section-card {
+      background: #ffffff;
+      margin: 8px 12px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-mobile);
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+    }
+
+    .section-header {
+      background: #f1f5f9;
+      padding: 8px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--mobile-text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-body {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Add delivery button inside section card */
+    .add-deli-btn {
+      width: 100%;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: #0f766e;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .add-deli-btn:hover {
+      background: #ccfbf1;
+    }
+
+    /* Checkbox card row */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mobile-text-dark);
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--mobile-primary);
+    }
+
+    /* Validity inputs */
+    .validity-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--mobile-text-dark);
+    }
+
+    .v-input {
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 6px;
+      font-size: 11px;
+      width: 110px;
+      background: #f8fafc;
+      color: var(--mobile-text-dark);
+    }
+
+    /* Order Summary Table */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      color: var(--mobile-text-dark);
+    }
+
+    .summary-table td {
+      padding: 4px 0;
+    }
+
+    .summary-table tr.total-row td {
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      background: var(--mobile-primary);
+      color: #ffffff;
+      padding: 11px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .submit-btn:disabled {
+      background: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    /* Mobile modal overlay inside the phone screen */
+    .m-modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      animation: modalFade 0.2s ease-out;
+      backdrop-filter: blur(2px);
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .m-modal-card {
+      width: 100%;
+      max-width: 290px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-sizing: border-box;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .m-modal-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--mobile-text-dark);
+      margin-bottom: 6px;
+    }
+
+    .m-modal-desc {
+      font-size: 10.5px;
+      color: var(--mobile-text-secondary);
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    .m-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .m-modal-btn {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--mobile-text-dark);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .m-modal-btn:hover {
+      background: #f1f5f9;
+    }
+
+    .m-modal-btn.pri {
+      background: var(--mobile-primary);
+      color: #ffffff;
+      border-color: var(--mobile-primary);
+    }
+
+    .m-modal-btn.pri:hover {
+      opacity: 0.95;
+    }
+
+    /* Lock overlay for locked panels */
+    .locked-panel {
+      position: relative;
+    }
+
+    .locked-panel.inactive::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(248, 250, 252, 0.45);
+      z-index: 10;
+      cursor: pointer;
+    }
+
+    /* ATP Check running loader spinner */
+    .m-loader {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--mobile-primary);
+      padding: 8px 12px;
+    }
+
+    /* Small spinner */
+    .m-spinner {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid rgba(0, 105, 148, 0.25);
+      border-top-color: var(--mobile-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Shake animation */
+    .pulse-error {
+      animation: phone-shake-error 0.5s ease-in-out;
+    }
+
+    @keyframes phone-shake-error {
+      0%, 100% { transform: scale(1); }
+      20%, 60% { transform: rotate(-1deg) scale(0.99); }
+      40%, 80% { transform: rotate(1deg) scale(1.01); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .slot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    
+    .slot-row:last-child {
+      border-bottom: none;
+    }
+    
+    .sdate {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--mobile-text-dark);
+    }
+    
+    .sqty {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--mobile-primary);
+      background: var(--mobile-primary-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Hide helper */
+    .hide {
+      display: none !important;
+    }
+
+    /* Add Delivery circular plus icon styling */
+    .plus-icon-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      background: #006994;
+      color: #ffffff;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+     /* Submit container */
+    .m-submit-container {
+      padding: 0 12px 20px 12px;
+      margin-top: 10px;
+    }
+
+    /* Small row save button */
+    .m-save-btn {
+      background: var(--mobile-primary);
+      color: #ffffff;
+      border: none;
+      padding: 4px 8px;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m-save-btn:disabled {
+      background: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Top desktop-level header inside simulator webpage -->
+  <div class="header-bar">
+    <h2 class="title">Cart Qty Sync Simulator</h2>
+    <div class="header-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+        <svg class="sun" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="moon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="workspace-layout">
+    <!-- Left Sidebar Panel for controls -->
+    <div class="sidebar-panel">
+      <!-- Scenario Switcher -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3a2.5 2.5 0 0 1 2.5-2.5H20v14H6.5a2.5 2.5 0 0 0-2.5 2.5z"/></svg>
+          Scenario Navigator
+        </div>
+        <div class="tabs">
+          <button class="tab on" onclick="sw(1)">Sc1 — Cart Increased</button>
+          <button class="tab" onclick="sw(2)">Sc2 — Cart Decreased</button>
+          <button class="tab" onclick="sw(3)">Sc3 — Schedule Qty Increased Beyond Cart Total</button>
+          <button class="tab" onclick="sw(4)">Sc4 — Qty Increased & Decreased (Combined)</button>
+        </div>
+      </div>
+
+      <!-- SAP Stock Status Settings -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:#0ea5e9; vertical-align:middle;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          SAP Stock Status
+        </div>
+        <div class="atp-options">
+          <button class="atp-opt active" id="atp-ok" onclick="setAtpStatus('ok')">All Available</button>
+          <button class="atp-opt" id="atp-warn" onclick="setAtpStatus('warn')">Insufficient Stock (Oil=8, Sugar=In-stock)</button>
+          <button class="atp-opt" id="atp-oos" onclick="setAtpStatus('oos')">Out of Stock (Oil=In-stock, Sugar=OOS)</button>
+          <button class="atp-opt" id="atp-full-oos" onclick="setAtpStatus('full-oos')">All Out of Stock (Both OOS)</button>
+          <button class="atp-opt" id="atp-mix" onclick="setAtpStatus('mix')">Mixed (Oil=8, Sugar=OOS, Noodles=In-stock)</button>
+        </div>
+      </div>
+
+      <!-- Active Scenario Description -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Scenario Info
+        </div>
+        <div class="sc-desc" id="sc-description"></div>
+      </div>
+    </div>
+
+    <!-- Center/Right Mobile Viewport -->
+    <div class="simulator-workspace">
+      <div class="mobile-viewport" id="mobile-viewport-el">
+        <div class="screen-content" id="screen-content">
+          <!-- Dynamic Step Rendering -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Global States
+  let simStockStatus = 'ok'; // 'ok', 'warn', 'oos'
+  let activeTab = 1;
+  let toastTimeout = null;
+
+  // Global variables mapping the simulator logic
+  let step = 1; // 1: Cart, 2: Schedule
+
+  // Scenario 1 extra vars
+  let s1Cart = 10;
+  let s1SugarCart = 5;
+  let s1Sched = [6, 4];
+  let s1SugarSched = [5];
+  let s1TempSched = [6, 4];
+  let s1SugarTempSched = [5];
+  let s1AtpChecked = 'ok'; // 'ok', 'fail', false
+  let s1ProposedProductType = ''; // 'oil' or 'sugar'
+  let s4ModalShown = false;
+
+  // Scenario 2 extra vars
+  let s2Cart = 10;
+  let s2SugarCart = 5;
+  let s2Sched = [6, 4];
+  let s2SugarSched = [5];
+  let s2TempSched = [6, 4];
+  let s2SugarTempSched = [5];
+  let s2ProposedCart = 10;
+  let s2ProposedSugarCart = 5;
+  let s2ConfirmModalShown = false;
+  let s2ProposedProductType = ''; // 'oil' or 'sugar'
+  let s2SubmitModalShown = false;
+  let s2AtpChecked = 'ok'; // 'ok', 'fail', false
+
+  // Scenario 3 extra vars
+  let s3Cart = 10;
+  let s3SugarCart = 5;
+  let s3Sched = [6, 4];
+  let s3SugarSched = [5];
+  let s3TempSched = [6, 4];
+  let s3SugarTempSched = [5];
+  let s3Edited = false;
+  let s3AtpFailed = false;
+  let s3AtpRunning = false;
+  let s3ErrorModalShown = false;
+  let s3ErrorSlotIdx = null;
+  let s3ErrorProductType = ''; // 'oil' or 'sugar'
+  let s3ErrorDelta = 0;
+
+  // Scenario 4 extra vars (Combined Scenario 1 & 2)
+  let s4Cart = 10;
+  let s4SugarCart = 5;
+  let s4Sched = [6, 4];
+  let s4SugarSched = [5];
+  let s4TempSched = [6, 4];
+  let s4SugarTempSched = [5];
+  let s4AtpChecked = 'ok';
+  let s4ProposedCart = 10;
+  let s4ProposedSugarCart = 5;
+  let s4ConfirmModalShown = false;
+  let s4ProposedProductType = ''; // 'oil' or 'sugar'
+  let s4SubmitModalShown = false;
+  let s4AtpRunning = false;
+  let s4AtpFailed = false;
+  let s4ErrorModalShown = false;
+  let s4ErrorSlotIdx = null;
+  let s4ErrorProductType = ''; // 'oil' or 'sugar'
+  let s4ErrorDelta = 0;
+
+  // Render product SVG drawings
+  const oilSvg = `
+    <svg viewBox="0 0 100 100" width="36" height="36" style="vertical-align: middle;">
+      <rect x="45" y="8" width="10" height="20" fill="#14532d" rx="2" />
+      <rect x="42" y="6" width="16" height="4" fill="#facc15" rx="1" />
+      <path d="M40 28 C40 28 30 35 30 50 L30 85 C30 88 33 90 37 90 L63 90 C67 90 70 88 70 85 L70 50 C70 35 60 28 60 28 Z" fill="#166534" />
+      <path d="M35 50 L35 85 C35 87 37 88 40 88 L45 88 L45 36 C38 42 35 50 35 50 Z" fill="#22c55e" opacity="0.4" />
+      <rect x="34" y="48" width="32" height="25" fill="#fef08a" rx="2" />
+      <circle cx="50" cy="58" r="6" fill="#854d0e" />
+      <rect x="40" y="78" width="20" height="2" fill="#854d0e" />
+    </svg>
+  `;
+
+  const sugarSvg = `
+    <svg viewBox="0 0 100 100" width="36" height="36" style="vertical-align: middle;">
+      <path d="M25 22 L75 22 L82 85 C82 88 79 90 75 90 L25 90 C21 90 18 88 18 85 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2" />
+      <line x1="25" y1="26" x2="75" y2="26" stroke="#64748b" stroke-width="2" stroke-dasharray="2 2" />
+      <rect x="32" y="38" width="36" height="36" fill="#0284c7" rx="2" />
+      <circle cx="50" cy="52" r="8" fill="#ffffff" />
+      <path d="M47 52 L50 48 L53 52 L50 56 Z" fill="#0284c7" />
+      <rect x="38" y="66" width="24" height="2" fill="#ffffff" />
+    </svg>
+  `;
+
+  const noodlesSvg = `
+    <svg viewBox="0 0 100 100" width="36" height="36" style="vertical-align: middle;">
+      <path d="M15 40 L85 40 L80 85 C80 88 77 90 73 90 L27 90 C23 90 20 88 20 85 Z" fill="#fef08a" stroke="#d97706" stroke-width="2" />
+      <path d="M15 40 Q30 35 50 40 Q70 45 85 40 L85 43 Q70 48 50 43 Q30 38 15 43 Z" fill="#f59e0b" />
+      <path d="M28 48 Q32 60 30 80 M38 48 Q42 60 40 80 M48 48 Q52 60 50 80 M58 48 Q62 60 60 80 M68 48 Q72 60 70 80" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" />
+      <rect x="28" y="55" width="44" height="15" fill="#ef4444" rx="1" />
+      <circle cx="50" cy="62.5" r="4" fill="#ffffff" />
+    </svg>
+  `;
+
+  const descriptions = [
+    "<strong>Scenario 1: Cart Qty Increased:</strong> Simulated cart increase (+2 Oil) locks the Delivery Schedule card (grey/dimmed). Click it to run ATP. If stock is sufficient, it unlocks. If insufficient, it fails. Checkout blocks until cart is auto-reduced to match slots.",
+    "<strong>Scenario 2: Cart Qty Decreased:</strong> Simulated cart decrease (-2 Oil) triggers a warning: auto-deduction is disabled. Schedule total exceeds cart, showing warning flags. User must manually reduce slots to align total.",
+    "<strong>Scenario 3: Schedule Qty Increased Beyond Cart Total:</strong> User increases slot allocation beyond cart total. Saving the slot triggers ATP for the incremental delta quantity. Succeeding syncs the cart; failing blocks submission.",
+    "<strong>Scenario 4: Qty Increased & Decreased (Combined):</strong> Olive Oil cart is increased (+2) requiring stock check, while Sugar Bag is decreased (-2) requiring manual slot reduction. Covers all validation and synchronization behaviors."
+  ];
+
+  // Helper selectors
+  function showToast(msg, type = 'warn') {
+    const parent = document.getElementById('mobile-viewport-el');
+    let toast = document.getElementById('m-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'm-toast';
+      parent.appendChild(toast);
+    }
+    toast.className = 'm-toast ' + type;
+
+    // Remove starting symbols like ✓, ⚠, ?, checkmarks or exclamation symbols
+    let rawText = msg.replace(/^[✓⚠\?\s\uFFFD\u26A0\u2713\u2714\u2715]+/g, '').trim();
+
+    // Parse title & subtitle by splitting on the first sentence-ending punctuation (., !, ?) followed by space
+    let title = rawText;
+    let subtitle = '';
+    const match = rawText.match(/^([^\.\!\?]+[\.\!\?])\s+(.*)$/);
+    if (match) {
+      title = match[1];
+      subtitle = match[2];
+    }
+
+    // Select icon SVG based on type
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M8 12.5l2.5 2.5 5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else if (type === 'error') {
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ef4444"/><text x="12" y="16.5" fill="white" font-size="14" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">!</text></svg>`;
+    } else {
+      // warn / default amber
+      iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f97316"/><text x="12" y="16.5" fill="white" font-size="14" font-family="system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle">!</text></svg>`;
+    }
+
+    let subtitleHtml = subtitle ? `<span class="m-toast-subtitle">${subtitle}</span>` : '';
+    toast.innerHTML = `
+      <div class="m-toast-icon">${iconSvg}</div>
+      <div class="m-toast-content">
+        <span class="m-toast-title">${title}</span>
+        ${subtitleHtml}
+      </div>
+    `;
+
+    toast.style.display = 'flex';
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  }
+
+  // Set ATP simulation status from top switcher
+  function setAtpStatus(status) {
+    simStockStatus = status;
+    document.getElementById('atp-ok').classList.toggle('active', status === 'ok');
+    document.getElementById('atp-warn').classList.toggle('active', status === 'warn');
+    document.getElementById('atp-oos').classList.toggle('active', status === 'oos');
+    document.getElementById('atp-full-oos').classList.toggle('active', status === 'full-oos');
+    document.getElementById('atp-mix').classList.toggle('active', status === 'mix');
+    
+    // Auto reset scenario views
+    initScenario(activeTab);
+  }
+
+  // Switch tabs
+  function sw(tabIdx) {
+    activeTab = tabIdx;
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('on', i === tabIdx - 1));
+    document.getElementById('sc-description').innerHTML = descriptions[tabIdx - 1];
+    
+    initScenario(tabIdx);
+  }
+
+  // Initialize specific tab states
+  function initScenario(tabIdx) {
+    step = 1; // Always reset to Step 1: Cart View
+    
+    if (tabIdx === 1) {
+      s1Cart = 10;
+      s1SugarCart = 5;
+      s1Sched = [6, 4];
+      s1SugarSched = [5];
+      s1TempSched = [6, 4];
+      s1SugarTempSched = [5];
+      s1AtpChecked = 'ok';
+      s4ModalShown = false;
+    } else if (tabIdx === 2) {
+      s2Cart = 10;
+      s2SugarCart = 5;
+      s2Sched = [6, 4];
+      s2SugarSched = [5];
+      s2TempSched = [6, 4];
+      s2SugarTempSched = [5];
+      s2ProposedCart = 10;
+      s2ProposedSugarCart = 5;
+      s2ConfirmModalShown = false;
+      s2SubmitModalShown = false;
+      s2AtpChecked = 'ok';
+    } else if (tabIdx === 3) {
+      s3Cart = 10;
+      s3SugarCart = 5;
+      s3Sched = [6, 4];
+      s3SugarSched = [5];
+      s3TempSched = [6, 4];
+      s3SugarTempSched = [5];
+      s3Edited = false;
+      s3AtpFailed = false;
+      s3AtpRunning = false;
+      s3ErrorModalShown = false;
+      s3ErrorSlotIdx = null;
+      s3ErrorDelta = 0;
+    } else if (tabIdx === 4) {
+      s4Cart = 10;
+      s4SugarCart = 5;
+      s4Sched = [6, 4];
+      s4SugarSched = [5];
+      s4TempSched = [6, 4];
+      s4SugarTempSched = [5];
+      s4AtpChecked = 'ok';
+      s4ProposedCart = 10;
+      s4ProposedSugarCart = 5;
+      s4ConfirmModalShown = false;
+      s4SubmitModalShown = false;
+      s4AtpRunning = false;
+      s4AtpFailed = false;
+      s4ErrorModalShown = false;
+      s4ErrorSlotIdx = null;
+      s4ErrorDelta = 0;
+    }
+    
+    renderApp();
+  }
+
+  // Draw App Screen inside mobile Mockup
+  function renderApp() {
+    const screen = document.getElementById('screen-content');
+    screen.innerHTML = ''; // Clear
+
+    // Draw header bar
+    const appHeader = document.createElement('div');
+    appHeader.className = 'app-header';
+    appHeader.innerHTML = `
+      <button class="icon-btn" onclick="backPressed()">${step === 2 ? '&#8249;' : ''}</button>
+      <span class="title-text">${step === 1 ? 'Cart' : 'Delivery Schedule'}</span>
+      <button class="icon-btn">&#8942;</button>
+    `;
+    screen.appendChild(appHeader);
+
+    // Draw customer details block
+    const custCard = document.createElement('div');
+    custCard.className = 'customer-card';
+    custCard.innerHTML = `
+      <div><strong>Customer Name:</strong> ABC FOOD PRODUCTS PTE. LTD</div>
+      <div><strong>Address:</strong> 28 BIOPOLIS ROAD SINGAPORE 138568</div>
+    `;
+    screen.appendChild(custCard);
+
+    // Render screens based on tab scenario and step wizard
+    if (activeTab === 1) {
+      renderS1();
+    } else if (activeTab === 2) {
+      renderS2();
+    } else if (activeTab === 3) {
+      renderS3();
+    } else if (activeTab === 4) {
+      renderS4();
+    }
+  }
+
+  // Back button press inside mobile mockup
+  function backPressed() {
+    if (step === 2) {
+      step = 1;
+      renderApp();
+    }
+  }
+
+  /* ==================== SCENARIO 1 RENDERING ==================== */
+  function renderS1() {
+    const screen = document.getElementById('screen-content');
+    const s1Allocated = s1Sched.reduce((a,b)=>a+b, 0);
+    const s1SugarAllocated = s1SugarSched.reduce((a,b)=>a+b, 0);
+    const s1TempAllocated = s1TempSched.reduce((a,b)=>a+b, 0);
+    const s1SugarTempAllocated = s1SugarTempSched.reduce((a,b)=>a+b, 0);
+
+    // Display pop-up alert banner if warning
+    const excessOil = s1Cart - 10;
+    const excessSugar = s1SugarCart - 5;
+    const totalExcess = (excessOil > 0 ? excessOil : 0) + (excessSugar > 0 ? excessSugar : 0);
+
+    const unallocatedOil = Math.max(0, s1Cart - s1Allocated);
+    const unallocatedSugar = Math.max(0, s1SugarCart - s1SugarAllocated);
+    const remainingUnallocated = unallocatedOil + unallocatedSugar;
+
+    if (s1AtpChecked === 'fail') {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner err';
+      banner.textContent = '⚠ Stock check failed: Insufficient stock available for the increased quantity (+' + totalExcess + ' units).';
+      screen.appendChild(banner);
+    } else if (s1AtpChecked === 'ok' && remainingUnallocated > 0) {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner ok';
+      banner.textContent = '✓ Stock verified successfully. Please allocate the extra ' + remainingUnallocated + ' units.';
+      screen.appendChild(banner);
+    } else if (s1AtpChecked !== 'ok' && s1AtpChecked !== 'fail') {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner warn';
+      banner.innerHTML = '⚠ Please click <strong>"+ Add Delivery"</strong> to run stock verification.';
+      screen.appendChild(banner);
+    }
+
+    let statusTag = '';
+    if (s1AtpChecked === 'ok') {
+      statusTag = '<div class="status-tag ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><polyline points="9 11 12 14 17 9"></polyline></svg> In Stock</div>';
+    } else if (s1AtpChecked === 'fail') {
+      statusTag = '<div class="status-tag fail"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg> Insufficient Stock</div>';
+    }
+
+    // Olive Oil Card
+    const oilCard = document.createElement('div');
+    oilCard.className = 'product-list-card';
+    const oilUvColor = s1Cart - s1Allocated > 0 ? '#d97706' : '#16a34a';
+    oilCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${oilSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Olive Oil Extra Virgin Olivoilà 250ML</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Olive</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) / 800G (NW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (BOX)</span>
+            <span class="price-main">$12 <span class="price-old">$13.60</span></span>
+            <div class="total-box">Total: $${(s1Cart * 12).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s1CartCh(-1)" ${s1Cart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s1Cart}" onchange="s1CartSet(this.value)">
+              <button class="m-qb" onclick="s1CartCh(1)">+</button>
+            </div>
+            ${s1Cart - s1Allocated > 0 ? `
+              <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
+                Unallocated: ${s1Cart - s1Allocated}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M12 2L15 5L19 4L18 8L21 11L17 12L16 16L12 15L8 16L7 12L3 11L6 8L5 4L9 5L12 2z"></path></svg>
+            10% Off For 1 Bread Product: -$0.29
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $0.20
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(oilCard);
+
+    // Sugar Card
+    const sugarCard = document.createElement('div');
+    sugarCard.className = 'product-list-card';
+    const sugarUvColor = s1SugarCart - s1SugarAllocated > 0 ? '#d97706' : '#16a34a';
+    sugarCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${sugarSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Sugar Bag Premium White 1KG</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Sugar</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (CS)</span>
+            <span class="price-main">$52.08 <span class="price-old">$54.08</span></span>
+            <div class="total-box">Total: $${(s1SugarCart * 52.08).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s1SugarCartCh(-1)" ${s1SugarCart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s1SugarCart}" onchange="s1SugarCartSet(this.value)">
+              <button class="m-qb" onclick="s1SugarCartCh(1)">+</button>
+            </div>
+            ${s1SugarCart - s1SugarAllocated > 0 ? `
+              <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
+                Unallocated: ${s1SugarCart - s1SugarAllocated}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            $1 Off ADC Flavored Coffee: -$1.00
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $12.00
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(sugarCard);
+
+    // Delivery Schedule Card (can be locked/inactive)
+    const isLocked = s1AtpChecked !== 'ok';
+    const schedCard = document.createElement('div');
+    schedCard.className = 'section-card';
+    schedCard.id = 's1-sched-card';
+
+    const oilUv = s1Cart - s1TempAllocated;
+    const sugarUv = s1SugarCart - s1SugarTempAllocated;
+
+    schedCard.innerHTML = `
+      <div class="section-header">Delivery Schedule</div>
+      <div class="section-body">
+        <div class="atp-loader hide" id="s1-loader-el" style="margin-bottom:8px">
+          <div class="m-spinner"></div> <span style="font-size:9.5px">Querying live stock allocations...</span>
+        </div>
+        
+        <div style="opacity: ${isLocked ? '0.6' : '1'}; pointer-events: ${isLocked ? 'none' : 'auto'}; transition: opacity 0.2s;">
+          <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Olive Oil 250ML</div>
+          <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+            <div class="m-qc">
+              <button class="m-qb" onclick="s1SlotCh(0, -1)" ${isLocked || s1TempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s1TempSched[0]}" readonly>
+              <button class="m-qb" onclick="s1SlotCh(0, 1)" ${isLocked || oilUv <= 0 ? 'disabled' : ''}>+</button>
+            </div>
+            <button class="m-save-btn" onclick="s1SlotSave(0);" ${isLocked || s1TempSched[0] === s1Sched[0] ? 'disabled' : ''}>Save</button>
+          </div>
+          
+          <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <span class="sdate" style="flex:1;">Wed 18 Jun</span>
+            <div class="m-qc">
+              <button class="m-qb" onclick="s1SlotCh(1, -1)" ${isLocked || s1TempSched[1] <= 0 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s1TempSched[1]}" readonly>
+              <button class="m-qb" onclick="s1SlotCh(1, 1)" ${isLocked || oilUv <= 0 ? 'disabled' : ''}>+</button>
+            </div>
+            <button class="m-save-btn" onclick="s1SlotSave(1);" ${isLocked || s1TempSched[1] === s1Sched[1] ? 'disabled' : ''}>Save</button>
+          </div>
+
+          <div style="margin-bottom:12px"></div>
+          <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Sugar Bag 1KG</div>
+          <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+            <div class="m-qc">
+              <button class="m-qb" onclick="s1SugarSlotCh(0, -1)" ${isLocked || s1SugarTempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s1SugarTempSched[0]}" readonly>
+              <button class="m-qb" onclick="s1SugarSlotCh(0, 1)" ${isLocked || sugarUv <= 0 ? 'disabled' : ''}>+</button>
+            </div>
+            <button class="m-save-btn" onclick="s1SugarSlotSave(0);" ${isLocked || s1SugarTempSched[0] === s1SugarSched[0] ? 'disabled' : ''}>Save</button>
+          </div>
+        </div>
+
+        <button class="add-deli-btn" style="margin-top: 12px; width: 100%; cursor: pointer;" onclick="s1ClickCard()" ${!isLocked ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
+          <span class="plus-icon-circle">+</span> Add Delivery
+        </button>
+      </div>
+    `;
+    screen.appendChild(schedCard);
+
+    // Order Summary Card
+    const sub = (s1Cart * 12.00) + (s1SugarCart * 52.08);
+    const savings = (s1Cart > 0 ? 0.29 : 0) + (s1SugarCart > 0 ? 1.00 : 0);
+    const gst = sub * 0.09;
+    const total = sub - savings + gst;
+
+    const summaryCard = document.createElement('div');
+    summaryCard.className = 'section-card';
+    summaryCard.innerHTML = `
+      <div class="section-header">Order Summary</div>
+      <div class="section-body">
+        <table class="summary-table">
+          <tr><td>Items</td><td align="right">${s1Cart + s1SugarCart}</td></tr>
+          <tr><td>Subtotal</td><td align="right">$${sub.toFixed(2)}</td></tr>
+          <tr><td>Savings</td><td align="right">-$${savings.toFixed(2)}</td></tr>
+          <tr><td>Delivery Fee</td><td align="right">$0.00</td></tr>
+          <tr><td>GST (9%)</td><td align="right">$${gst.toFixed(2)}</td></tr>
+          <tr class="total-row"><td>Total</td><td align="right">$${total.toFixed(2)}</td></tr>
+        </table>
+      </div>
+    `;
+    screen.appendChild(summaryCard);
+
+    // Submit Button
+    const isS1SubmitDisabled = s1AtpChecked !== 'ok';
+    const submitContainer = document.createElement('div');
+    submitContainer.className = 'm-submit-container';
+    submitContainer.innerHTML = `
+      <button class="submit-btn" onclick="s1Submit()" ${isS1SubmitDisabled ? 'disabled' : ''}>Submit</button>
+    `;
+    screen.appendChild(submitContainer);
+
+    // Unallocated modal overlay inside mobile screen
+    if (s4ModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      
+      let listItems = '';
+      const oilDiff = oilTot - s1Cart;
+      const sugarDiff = sugarTot - s1SugarCart;
+      
+      if (oilDiff < 0) {
+        listItems += `<li><strong>Olive Oil:</strong> ${Math.abs(oilDiff)} units remain unassigned.</li>`;
+      } else if (oilDiff > 0) {
+        listItems += `<li><strong>Olive Oil:</strong> ${oilDiff} units are overallocated.</li>`;
+      }
+      
+      if (sugarDiff < 0) {
+        listItems += `<li><strong>Sugar Bag:</strong> ${Math.abs(sugarDiff)} units remain unassigned.</li>`;
+      } else if (sugarDiff > 0) {
+        listItems += `<li><strong>Sugar Bag:</strong> ${sugarDiff} units are overallocated.</li>`;
+      }
+
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title">Resolve Quantity Mismatches</div>
+          <div class="m-modal-desc">
+            The following items have schedule/cart quantity mismatches:
+            <ul style="margin: 10px 0; padding-left: 20px; font-size: 10px; text-align: left; line-height: 1.5; color: var(--mobile-text-dark);">
+              ${listItems}
+            </ul>
+            Choose an action to proceed:
+          </div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button class="m-modal-btn" onclick="s4ModalShown = false; renderApp();">Cancel</button>
+              <button class="m-modal-btn pri" onclick="s1SyncQuantities()">Sync Cart Qty</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+  }
+
+  function s1CartCh(delta) {
+    s1Cart = Math.max(0, s1Cart + delta);
+    const allocated = s1Sched.reduce((a,b)=>a+b, 0);
+    s1AtpChecked = false;
+    if (s1Cart > allocated) {
+      const diff = s1Cart - allocated;
+      showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+    }
+    renderApp();
+  }
+
+  function s1CartSet(val) {
+    let intVal = parseInt(val) || 0;
+    s1Cart = Math.max(0, intVal);
+    const allocated = s1Sched.reduce((a,b)=>a+b, 0);
+    s1AtpChecked = false;
+    if (s1Cart > allocated) {
+      const diff = s1Cart - allocated;
+      showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+    }
+    renderApp();
+  }
+
+  function s1SugarCartCh(delta) {
+    s1SugarCart = Math.max(0, s1SugarCart + delta);
+    const allocated = s1SugarSched.reduce((a,b)=>a+b, 0);
+    s1AtpChecked = false;
+    if (s1SugarCart > allocated) {
+      const diff = s1SugarCart - allocated;
+      showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+    }
+    renderApp();
+  }
+
+  function s1SugarCartSet(val) {
+    let intVal = parseInt(val) || 0;
+    s1SugarCart = Math.max(0, intVal);
+    const allocated = s1SugarSched.reduce((a,b)=>a+b, 0);
+    s1AtpChecked = false;
+    if (s1SugarCart > allocated) {
+      const diff = s1SugarCart - allocated;
+      showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+    }
+    renderApp();
+  }
+
+  function s1ClickCard() {
+    if (s1AtpChecked === 'ok') return;
+    const loader = document.getElementById('s1-loader-el');
+    if (loader) loader.classList.remove('hide');
+
+    setTimeout(() => {
+      if (loader) loader.classList.add('hide');
+      
+      if (simStockStatus === 'warn' && s1Cart > 10) {
+        s1AtpChecked = 'fail';
+        document.getElementById('s1-sched-card').classList.add('pulse-error');
+        setTimeout(() => document.getElementById('s1-sched-card').classList.remove('pulse-error'), 500);
+        showToast('Stock check failed. Insufficient stock available.', 'error');
+      } else {
+        s1AtpChecked = 'ok';
+        showToast('✓ Stock verified successfully. Delivery Schedule unlocked.', 'success');
+        
+        // Auto scroll to schedule card
+        setTimeout(() => {
+          const cardEl = document.getElementById('s1-sched-card');
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardEl.style.borderColor = '#006994';
+            cardEl.style.boxShadow = '0 0 0 2px rgba(0, 105, 148, 0.25)';
+            setTimeout(() => {
+              cardEl.style.borderColor = '';
+              cardEl.style.boxShadow = '';
+            }, 1500);
+          }
+        }, 100);
+      }
+      renderApp();
+    }, 600);
+  }
+
+  function s1SlotCh(idx, delta) {
+    if (s1AtpChecked !== 'ok') {
+      s1ClickCard();
+      return;
+    }
+    const tot = s1TempSched.reduce((a,b)=>a+b, 0);
+    const uv = s1Cart - tot;
+    if (delta > 0 && uv <= 0) return;
+    if (delta < 0 && s1TempSched[idx] <= 0) return;
+
+    s1TempSched[idx] += delta;
+    renderApp();
+  }
+
+  function s1SlotSave(idx) {
+    s1Sched[idx] = s1TempSched[idx];
+    renderApp();
+    showToast('Schedule saved.', 'success');
+  }
+
+  function s1SugarSlotCh(idx, delta) {
+    if (s1AtpChecked !== 'ok') {
+      s1ClickCard();
+      return;
+    }
+    const tot = s1SugarTempSched.reduce((a,b)=>a+b, 0);
+    const uv = s1SugarCart - tot;
+    if (delta > 0 && uv <= 0) return;
+    if (delta < 0 && s1SugarTempSched[idx] <= 0) return;
+
+    s1SugarTempSched[idx] += delta;
+    renderApp();
+  }
+
+  function s1SugarSlotSave(idx) {
+    s1SugarSched[idx] = s1SugarTempSched[idx];
+    renderApp();
+    showToast('Schedule saved.', 'success');
+  }
+
+  function s1Submit() {
+    s1Sched = [...s1TempSched];
+    s1SugarSched = [...s1SugarTempSched];
+    const oilTot = s1Sched.reduce((a,b)=>a+b, 0);
+    const sugarTot = s1SugarSched.reduce((a,b)=>a+b, 0);
+    if (oilTot !== s1Cart || sugarTot !== s1SugarCart) {
+      s4ModalShown = true;
+      renderApp();
+    } else {
+      showToast('✓ Order submitted successfully!', 'success');
+      // Switch to SC2
+      activeTab = 2;
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('on', i === 1));
+      document.getElementById('sc-description').innerHTML = descriptions[1];
+      initScenario(2);
+    }
+  }
+
+  function s1SyncQuantities() {
+    s4ModalShown = false;
+    s1Cart = s1Sched.reduce((a,b)=>a+b, 0);
+    s1SugarCart = s1SugarSched.reduce((a,b)=>a+b, 0);
+    s1TempSched = [...s1Sched];
+    s1SugarTempSched = [...s1SugarSched];
+    s1AtpChecked = 'ok';
+    renderApp();
+    showToast('Cart quantities synchronized to match schedules.', 'success');
+  }
+
+
+  /* ==================== SCENARIO 2 RENDERING ==================== */
+  function renderS2() {
+    const screen = document.getElementById('screen-content');
+    
+    // Draw Cart Banner
+    const oilTot = s2Sched.reduce((a,b)=>a+b, 0);
+    const sugarTot = s2SugarSched.reduce((a,b)=>a+b, 0);
+    
+    const oilDiff = oilTot - s2Cart;
+    const sugarDiff = sugarTot - s2SugarCart;
+
+    if (oilDiff > 0 || sugarDiff > 0) {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner warn';
+      banner.innerHTML = '⚠ Some items have scheduled quantities exceeding their cart quantity. Please check and update them below.';
+      screen.appendChild(banner);
+    }
+
+    if (s2AtpChecked !== 'ok' && s2AtpChecked !== 'fail') {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner warn';
+      banner.innerHTML = '⚠ Please click <strong>"+ Add Delivery"</strong> to run stock verification.';
+      screen.appendChild(banner);
+    }
+
+    let statusTag = '';
+    if (s2AtpChecked === 'ok') {
+      statusTag = '<div class="status-tag ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><polyline points="9 11 12 14 17 9"></polyline></svg> In Stock</div>';
+    } else if (s2AtpChecked === 'fail') {
+      statusTag = '<div class="status-tag fail"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg> Insufficient Stock</div>';
+    }
+
+    // Olive Oil Card
+    const oilCard = document.createElement('div');
+    oilCard.className = 'product-list-card';
+    oilCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${oilSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Olive Oil Extra Virgin Olivoilà 250ML</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Olive</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) / 800G (NW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (BOX)</span>
+            <span class="price-main">$12 <span class="price-old">$13.60</span></span>
+            <div class="total-box">Total: $${(s2Cart * 12).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s2CartCh(-1)" ${s2Cart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s2Cart}" onchange="s2CartSet(this.value)">
+              <button class="m-qb" onclick="s2CartCh(1)">+</button>
+            </div>
+            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${oilTot} / Max: ${s2Cart}</div>` : ''}
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M12 2L15 5L19 4L18 8L21 11L17 12L16 16L12 15L8 16L7 12L3 11L6 8L5 4L9 5L12 2z"></path></svg>
+            10% Off For 1 Bread Product: -$0.29
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $0.20
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(oilCard);
+
+    // Sugar Card
+    const sugarCard = document.createElement('div');
+    sugarCard.className = 'product-list-card';
+    sugarCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${sugarSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Sugar Bag Premium White 1KG</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Sugar</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (CS)</span>
+            <span class="price-main">$52.08 <span class="price-old">$54.08</span></span>
+            <div class="total-box">Total: $${(s2SugarCart * 52.08).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s2SugarCartCh(-1)" ${s2SugarCart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s2SugarCart}" onchange="s2SugarCartSet(this.value)">
+              <button class="m-qb" onclick="s2SugarCartCh(1)">+</button>
+            </div>
+            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${sugarTot} / Max: ${s2SugarCart}</div>` : ''}
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            $1 Off ADC Flavored Coffee: -$1.00
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $12.00
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(sugarCard);
+
+    // Delivery Schedule Card
+    const isLocked = s2AtpChecked !== 'ok';
+    const schedCard = document.createElement('div');
+    schedCard.className = 'section-card';
+    schedCard.id = 's2-sched-card';
+    schedCard.innerHTML = `
+      <div class="section-header">Delivery Schedule</div>
+      <div class="section-body">
+        <div class="atp-loader hide" id="s2-loader-el" style="margin-bottom:8px">
+          <div class="m-spinner"></div> <span style="font-size:9.5px">Querying live stock allocations...</span>
+        </div>
+        
+        <div style="opacity: ${isLocked ? '0.6' : '1'}; pointer-events: ${isLocked ? 'none' : 'auto'}; transition: opacity 0.2s;">
+          ${(() => {
+            const oilUv = s2Cart - (s2TempSched[0] + s2TempSched[1]);
+            const sugarUv = s2SugarCart - s2SugarTempSched[0];
+            return `
+              <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Olive Oil 250ML</div>
+              <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+                <div class="m-qc">
+                  <button class="m-qb" onclick="s2SlotCh(0, -1)" ${isLocked || s2TempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+                  <input type="text" class="m-qv" value="${s2TempSched[0]}" readonly>
+                  <button class="m-qb" onclick="s2SlotCh(0, 1)" ${isLocked || oilUv <= 0 ? 'disabled' : ''}>+</button>
+                </div>
+                <button class="m-save-btn" onclick="s2SlotSave(0);" ${isLocked || s2TempSched[0] === s2Sched[0] ? 'disabled' : ''}>Save</button>
+              </div>
+              <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="sdate" style="flex:1;">Wed 18 Jun</span>
+                <div class="m-qc">
+                  <button class="m-qb" onclick="s2SlotCh(1, -1)" ${isLocked || s2TempSched[1] <= 0 ? 'disabled' : ''}>−</button>
+                  <input type="text" class="m-qv" value="${s2TempSched[1]}" readonly>
+                  <button class="m-qb" onclick="s2SlotCh(1, 1)" ${isLocked || oilUv <= 0 ? 'disabled' : ''}>+</button>
+                </div>
+                <button class="m-save-btn" onclick="s2SlotSave(1);" ${isLocked || s2TempSched[1] === s2Sched[1] ? 'disabled' : ''}>Save</button>
+              </div>
+
+              <div style="margin-bottom:12px"></div>
+              <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Sugar Bag 1KG</div>
+              <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+                <div class="m-qc">
+                  <button class="m-qb" onclick="s2SugarSlotCh(0, -1)" ${isLocked || s2SugarTempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+                  <input type="text" class="m-qv" value="${s2SugarTempSched[0]}" readonly>
+                  <button class="m-qb" onclick="s2SugarSlotCh(0, 1)" ${isLocked || sugarUv <= 0 ? 'disabled' : ''}>+</button>
+                </div>
+                <button class="m-save-btn" onclick="s2SugarSlotSave(0);" ${isLocked || s2SugarTempSched[0] === s2SugarSched[0] ? 'disabled' : ''}>Save</button>
+              </div>
+            `;
+          })()}
+        </div>
+
+        <button class="add-deli-btn" style="margin-top: 12px; width: 100%; cursor: pointer;" onclick="s2ClickCard()" ${!isLocked ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
+          <span class="plus-icon-circle">+</span> Add Delivery
+        </button>
+      </div>
+    `;
+    screen.appendChild(schedCard);
+
+    // Order Summary Card
+    const sub = (s2Cart * 12.00) + (s2SugarCart * 52.08);
+    const savings = (s2Cart > 0 ? 0.29 : 0) + (s2SugarCart > 0 ? 1.00 : 0);
+    const gst = sub * 0.09;
+    const total = sub - savings + gst;
+
+    const summaryCard = document.createElement('div');
+    summaryCard.className = 'section-card';
+    summaryCard.innerHTML = `
+      <div class="section-header">Order Summary</div>
+      <div class="section-body">
+        <table class="summary-table">
+          <tr><td>Items</td><td align="right">${s2Cart + s2SugarCart}</td></tr>
+          <tr><td>Subtotal</td><td align="right">$${sub.toFixed(2)}</td></tr>
+          <tr><td>Savings</td><td align="right">-$${savings.toFixed(2)}</td></tr>
+          <tr><td>Delivery Fee</td><td align="right">$0.00</td></tr>
+          <tr><td>GST (9%)</td><td align="right">$${gst.toFixed(2)}</td></tr>
+          <tr class="total-row"><td>Total</td><td align="right">$${total.toFixed(2)}</td></tr>
+        </table>
+      </div>
+    `;
+    screen.appendChild(summaryCard);
+
+    // Submit Button
+    const isS2SubmitDisabled = s2AtpChecked !== 'ok';
+    const submitContainer = document.createElement('div');
+    submitContainer.className = 'm-submit-container';
+    submitContainer.innerHTML = `
+      <button class="submit-btn" onclick="s2Submit()" ${isS2SubmitDisabled ? 'disabled' : ''}>Submit</button>
+    `;
+    screen.appendChild(submitContainer);
+
+    // Confirmation Modal for reduction
+    if (s2ConfirmModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      let title = 'Reduce Cart Quantity';
+      let desc = '';
+      if (s2ProposedProductType === 'oil') {
+        desc = `You are reducing the cart quantity of Olive Oil to <strong>${s2ProposedCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+      } else {
+        desc = `You are reducing the cart quantity of Sugar to <strong>${s2ProposedSugarCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+      }
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title">${title}</div>
+          <div class="m-modal-desc">${desc}</div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <button class="m-modal-btn pri" onclick="s2ConfirmReduce()">Confirm</button>
+              <button class="m-modal-btn" onclick="s2CancelReduce()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+
+    // Submit Mismatch Modal (Under or Over-allocated)
+    if (s2SubmitModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      
+      let listItems = '';
+      const oilDiff = oilTot - s2Cart;
+      const sugarDiff = sugarTot - s2SugarCart;
+      
+      if (oilDiff > 0) {
+        listItems += `<li><strong>Olive Oil:</strong> ${oilDiff} units are overallocated.</li>`;
+      } else if (oilDiff < 0) {
+        listItems += `<li><strong>Olive Oil:</strong> ${Math.abs(oilDiff)} units remain unassigned.</li>`;
+      }
+      
+      if (sugarDiff > 0) {
+        listItems += `<li><strong>Sugar Bag:</strong> ${sugarDiff} units are overallocated.</li>`;
+      } else if (sugarDiff < 0) {
+        listItems += `<li><strong>Sugar Bag:</strong> ${Math.abs(sugarDiff)} units remain unassigned.</li>`;
+      }
+
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title">Resolve Quantity Mismatches</div>
+          <div class="m-modal-desc">
+            The following items have schedule/cart quantity mismatches:
+            <ul style="margin: 10px 0; padding-left: 20px; font-size: 10px; text-align: left; line-height: 1.5; color: var(--mobile-text-dark);">
+              ${listItems}
+            </ul>
+            Choose an action to proceed:
+          </div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button class="m-modal-btn" onclick="s2SubmitModalShown = false; renderApp();">Cancel</button>
+              <button class="m-modal-btn pri" onclick="s2SyncQuantities()">Sync Cart Qty</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+  }
+
+  function s2CartCh(delta) {
+    const oilTot = s2Sched.reduce((a,b)=>a+b, 0);
+    const proposed = Math.max(0, s2Cart + delta);
+    if (delta < 0 && proposed < oilTot) {
+      s2ProposedCart = proposed;
+      s2ProposedProductType = 'oil';
+      s2ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s2Cart = proposed;
+      s2AtpChecked = false;
+      renderApp();
+    }
+  }
+
+  function s2CartSet(val) {
+    const oilTot = s2Sched.reduce((a,b)=>a+b, 0);
+    let intVal = parseInt(val) || 0;
+    intVal = Math.max(0, intVal);
+    if (intVal < s2Cart && intVal < oilTot) {
+      s2ProposedCart = intVal;
+      s2ProposedProductType = 'oil';
+      s2ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s2Cart = intVal;
+      s2AtpChecked = false;
+      renderApp();
+    }
+  }
+
+  function s2SugarCartCh(delta) {
+    const sugarTot = s2SugarSched.reduce((a,b)=>a+b, 0);
+    const proposed = Math.max(0, s2SugarCart + delta);
+    if (delta < 0 && proposed < sugarTot) {
+      s2ProposedSugarCart = proposed;
+      s2ProposedProductType = 'sugar';
+      s2ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s2SugarCart = proposed;
+      s2AtpChecked = false;
+      renderApp();
+    }
+  }
+
+  function s2SugarCartSet(val) {
+    const sugarTot = s2SugarSched.reduce((a,b)=>a+b, 0);
+    let intVal = parseInt(val) || 0;
+    intVal = Math.max(0, intVal);
+    if (intVal < s2SugarCart && intVal < sugarTot) {
+      s2ProposedSugarCart = intVal;
+      s2ProposedProductType = 'sugar';
+      s2ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s2SugarCart = intVal;
+      s2AtpChecked = false;
+      renderApp();
+    }
+  }
+
+  function s2ConfirmReduce() {
+    if (s2ProposedProductType === 'oil') {
+      s2Cart = s2ProposedCart;
+    } else {
+      s2SugarCart = s2ProposedSugarCart;
+    }
+    s2ConfirmModalShown = false;
+    s2AtpChecked = false;
+    renderApp();
+    showToast('Cart quantity reduced.', 'success');
+  }
+
+  function s2CancelReduce() {
+    s2ConfirmModalShown = false;
+    renderApp();
+  }
+
+  function s2ClickCard() {
+    if (s2AtpChecked === 'ok') return;
+    const loader = document.getElementById('s2-loader-el');
+    if (loader) loader.classList.remove('hide');
+
+    setTimeout(() => {
+      if (loader) loader.classList.add('hide');
+      s2AtpChecked = 'ok';
+      showToast('✓ Stock verified successfully. Delivery Schedule unlocked.', 'success');
+      
+      setTimeout(() => {
+        const cardEl = document.getElementById('s2-sched-card');
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          cardEl.style.borderColor = '#006994';
+          cardEl.style.boxShadow = '0 0 0 2px rgba(0, 105, 148, 0.25)';
+          setTimeout(() => {
+            cardEl.style.borderColor = '';
+            cardEl.style.boxShadow = '';
+          }, 1500);
+        }
+      }, 100);
+      renderApp();
+    }, 600);
+  }
+
+  function s2SlotCh(idx, delta) {
+    if (s2AtpChecked !== 'ok') {
+      s2ClickCard();
+      return;
+    }
+    s2TempSched[idx] = Math.max(0, s2TempSched[idx] + delta);
+    renderApp();
+  }
+
+  function s2SlotSave(idx) {
+    s2Sched[idx] = s2TempSched[idx];
+    renderApp();
+    showToast('Schedule saved.', 'success');
+  }
+
+  function s2SugarSlotCh(idx, delta) {
+    if (s2AtpChecked !== 'ok') {
+      s2ClickCard();
+      return;
+    }
+    s2SugarTempSched[idx] = Math.max(0, s2SugarTempSched[idx] + delta);
+    renderApp();
+  }
+
+  function s2SugarSlotSave(idx) {
+    s2SugarSched[idx] = s2SugarTempSched[idx];
+    renderApp();
+    showToast('Schedule saved.', 'success');
+  }
+
+  function s2Submit() {
+    s2Sched = [...s2TempSched];
+    s2SugarSched = [...s2SugarTempSched];
+    const oilTot = s2Sched.reduce((a,b)=>a+b, 0);
+    const sugarTot = s2SugarSched.reduce((a,b)=>a+b, 0);
+    if (oilTot !== s2Cart || sugarTot !== s2SugarCart) {
+      s2SubmitModalShown = true;
+      renderApp();
+    } else {
+      showToast('✓ Order submitted successfully!', 'success');
+      activeTab = 3;
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('on', i === 2));
+      document.getElementById('sc-description').innerHTML = descriptions[2];
+      initScenario(3);
+    }
+  }
+
+  function s2SyncQuantities() {
+    s2SubmitModalShown = false;
+    s2Cart = s2Sched.reduce((a,b)=>a+b, 0);
+    s2SugarCart = s2SugarSched.reduce((a,b)=>a+b, 0);
+    s2TempSched = [...s2Sched];
+    s2SugarTempSched = [...s2SugarSched];
+    renderApp();
+    showToast('Cart quantities synchronized to match schedules.', 'success');
+  }
+
+
+  /* ==================== SCENARIO 3 RENDERING ==================== */
+  function renderS3() {
+    const screen = document.getElementById('screen-content');
+    const tot = s3Sched[0] + s3Sched[1];
+    const sugarTot = s3SugarSched[0];
+    const uv = Math.max(0, s3Cart - tot);
+    const sugarUv = Math.max(0, s3SugarCart - sugarTot);
+
+    const totTemp = s3TempSched[0] + s3TempSched[1];
+    const sugarTotTemp = s3SugarTempSched[0];
+
+    const deltaTemp = totTemp - s3Cart;
+    const sugarDeltaTemp = sugarTotTemp - s3SugarCart;
+
+    const loaderText = s3ErrorProductType === 'oil' 
+      ? `Verifying stock availability for the additional ${s3ErrorDelta} units of Olive Oil...` 
+      : `Verifying stock availability for the additional ${s3ErrorDelta} units of Sugar...`;
+    
+    // Status banner inside mobile screen
+    if (totTemp > s3Cart || sugarTotTemp > s3SugarCart) {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner warn';
+      banner.textContent = '• Exceeds Cart quantity. Save the slot to trigger ATP check and sync cart.';
+      screen.appendChild(banner);
+    }
+
+    let statusTag = '<div class="status-tag ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><polyline points="9 11 12 14 17 9"></polyline></svg> In Stock</div>';
+    if (s3AtpFailed) {
+      statusTag = '<div class="status-tag fail"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg> Insufficient Stock</div>';
+    }
+
+    // Olive Oil Card
+    const oilCard = document.createElement('div');
+    oilCard.className = 'product-list-card';
+    const warnColor = totTemp > s3Cart ? '#d97706' : '#16a34a';
+    oilCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${oilSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Olive Oil Extra Virgin Olivoilà 250ML</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Olive</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) / 800G (NW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (BOX)</span>
+            <span class="price-main">$12 <span class="price-old">$13.60</span></span>
+            <div class="total-box">Total: $${(s3Cart * 12).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s3CartCh(-1)" ${s3AtpRunning || s3Cart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s3Cart}" onchange="s3CartSet(this.value)">
+              <button class="m-qb" onclick="s3CartCh(1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
+            </div>
+            <div style="font-size: 10px; font-weight: 700; color: ${warnColor}; text-align: right;">
+              ${totTemp > s3Cart ? `+${totTemp - s3Cart} exceeds cart` : uv > 0 ? `Unallocated: ${uv}` : 'Aligned'}
+            </div>
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M12 2L15 5L19 4L18 8L21 11L17 12L16 16L12 15L8 16L7 12L3 11L6 8L5 4L9 5L12 2z"></path></svg>
+            10% Off For 1 Bread Product: -$0.29
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $0.20
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(oilCard);
+
+    // Sugar Card
+    const sugarCard = document.createElement('div');
+    sugarCard.className = 'product-list-card';
+    const sugarWarnColor = sugarTotTemp > s3SugarCart ? '#d97706' : '#16a34a';
+    sugarCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${sugarSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Sugar Bag Premium White 1KG</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Sugar</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (CS)</span>
+            <span class="price-main">$52.08 <span class="price-old">$54.08</span></span>
+            <div class="total-box">Total: $${(s3SugarCart * 52.08).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s3SugarCartCh(-1)" ${s3AtpRunning || s3SugarCart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s3SugarCart}" onchange="s3SugarCartSet(this.value)">
+              <button class="m-qb" onclick="s3SugarCartCh(1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
+            </div>
+            <div style="font-size: 10px; font-weight: 700; color: ${sugarWarnColor}; text-align: right;">
+              ${sugarTotTemp > s3SugarCart ? `+${sugarTotTemp - s3SugarCart} exceeds cart` : sugarUv > 0 ? `Unallocated: ${sugarUv}` : 'Aligned'}
+            </div>
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            $1 Off ADC Flavored Coffee: -$1.00
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $12.00
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(sugarCard);
+
+    // Delivery Schedule Card
+    const schedCard = document.createElement('div');
+    schedCard.className = 'section-card';
+    schedCard.innerHTML = `
+      <div class="section-header">Delivery Schedule — Edit Mode</div>
+      <div class="section-body">
+        <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Olive Oil 250ML</div>
+        <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+          <div class="m-qc">
+            <button class="m-qb" onclick="s3SlotCh(0, -1)" ${s3AtpRunning || s3TempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+            <input type="text" class="m-qv" value="${s3TempSched[0]}" readonly>
+            <button class="m-qb" onclick="s3SlotCh(0, 1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
+          </div>
+          <button class="m-save-btn" onclick="s3SlotSave(0);" ${s3AtpRunning || s3TempSched[0] === s3Sched[0] ? 'disabled' : ''}>Save</button>
+        </div>
+        <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <span class="sdate" style="flex:1;">Wed 18 Jun</span>
+          <div class="m-qc">
+            <button class="m-qb" onclick="s3SlotCh(1, -1)" ${s3AtpRunning || s3TempSched[1] <= 0 ? 'disabled' : ''}>−</button>
+            <input type="text" class="m-qv" value="${s3TempSched[1]}" readonly>
+            <button class="m-qb" onclick="s3SlotCh(1, 1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
+          </div>
+          <button class="m-save-btn" onclick="s3SlotSave(1);" ${s3AtpRunning || s3TempSched[1] === s3Sched[1] ? 'disabled' : ''}>Save</button>
+        </div>
+        
+        <div style="margin-bottom:12px"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Sugar Bag 1KG</div>
+        <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+          <div class="m-qc">
+            <button class="m-qb" onclick="s3SugarSlotCh(0, -1)" ${s3AtpRunning || s3SugarTempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+            <input type="text" class="m-qv" value="${s3SugarTempSched[0]}" readonly>
+            <button class="m-qb" onclick="s3SugarSlotCh(0, 1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
+          </div>
+          <button class="m-save-btn" onclick="s3SugarSlotSave(0);" ${s3AtpRunning || s3SugarTempSched[0] === s3SugarSched[0] ? 'disabled' : ''}>Save</button>
+        </div>
+
+        <div class="atp-loader ${s3AtpRunning ? '' : 'hide'}" id="s3-loader-el" style="margin-top:10px">
+          <div class="m-spinner"></div> <span style="font-size:9.5px" id="s3-loader-text">${loaderText}</span>
+        </div>
+      </div>
+    `;
+    screen.appendChild(schedCard);
+
+    // Order Summary Card
+    const sub = (s3Cart * 12.00) + (s3SugarCart * 52.08);
+    const savings = (s3Cart > 0 ? 0.29 : 0) + (s3SugarCart > 0 ? 1.00 : 0);
+    const gst = sub * 0.09;
+    const total = sub - savings + gst;
+
+    const summaryCard = document.createElement('div');
+    summaryCard.className = 'section-card';
+    summaryCard.innerHTML = `
+      <div class="section-header">Order Summary</div>
+      <div class="section-body">
+        <table class="summary-table">
+          <tr><td>Items</td><td align="right">${s3Cart + s3SugarCart}</td></tr>
+          <tr><td>Subtotal</td><td align="right">$${sub.toFixed(2)}</td></tr>
+          <tr><td>Savings</td><td align="right">-$${savings.toFixed(2)}</td></tr>
+          <tr><td>Delivery Fee</td><td align="right">$0.00</td></tr>
+          <tr><td>GST (9%)</td><td align="right">$${gst.toFixed(2)}</td></tr>
+          <tr class="total-row"><td>Total</td><td align="right">$${total.toFixed(2)}</td></tr>
+        </table>
+      </div>
+    `;
+    screen.appendChild(summaryCard);
+
+    // Submit Button
+    const isS3SubmitDisabled = s3AtpRunning || s3AtpFailed || s3Cart !== tot || s3SugarCart !== sugarTot || s3TempSched[0] !== s3Sched[0] || s3TempSched[1] !== s3Sched[1] || s3SugarTempSched[0] !== s3SugarSched[0];
+    const submitContainer = document.createElement('div');
+    submitContainer.className = 'm-submit-container';
+    submitContainer.innerHTML = `
+      <button class="submit-btn" id="s3-submit-btn" onclick="s3Submit()" ${isS3SubmitDisabled ? 'disabled' : ''}>Submit</button>
+    `;
+    screen.appendChild(submitContainer);
+
+    // Error Modal for Scenario 3 ATP check failure
+    if (s3ErrorModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title" style="color: var(--mobile-text-danger); font-weight: 700;">⚠ Insufficient Stock</div>
+          <div class="m-modal-desc">
+            There is insufficient stock for the additional <strong>${s3ErrorDelta}</strong> units of ${s3ErrorProductType === 'oil' ? 'Olive Oil' : 'Sugar'}.<br><br>
+            Please revert the slot allocation or choose a different quantity.
+          </div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button class="m-modal-btn" onclick="s3ErrorModalShown = false; renderApp();">Adjust Qty</button>
+              <button class="m-modal-btn pri" style="background: #ef4444; border-color: #ef4444; color: white;" onclick="s3RevertSlot()">Revert</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+  }
+
+  function s3SlotCh(idx, delta) {
+    if (s3AtpRunning) return;
+    s3TempSched[idx] = Math.max(0, s3TempSched[idx] + delta);
+    s3Edited = true;
+    s3AtpFailed = false;
+    renderApp();
+  }
+
+  function s3SlotSave(idx) {
+    if (s3AtpRunning) return;
+
+    const proposedTotal = s3TempSched[idx] + s3Sched[1 - idx];
+    const delta = proposedTotal - s3Cart;
+
+    if (delta > 0) {
+      s3AtpRunning = true;
+      s3AtpFailed = false;
+      s3ErrorProductType = 'oil';
+      renderApp();
+
+      setTimeout(() => {
+        s3AtpRunning = false;
+        if (simStockStatus !== 'ok' && proposedTotal > 10) {
+          s3AtpFailed = true;
+          s3ErrorSlotIdx = idx;
+          s3ErrorProductType = 'oil';
+          s3ErrorDelta = delta;
+          s3ErrorModalShown = true;
+          document.querySelector('.mobile-viewport').classList.add('pulse-error');
+          setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
+          showToast('Stock check failed. Insufficient stock available.', 'error');
+        } else {
+          s3AtpFailed = false;
+          s3Sched[idx] = s3TempSched[idx];
+          s3Cart = proposedTotal;
+          showToast('Cart quantity updated to match your schedule.', 'success');
+        }
+        renderApp();
+      }, 800);
+    } else {
+      s3Sched[idx] = s3TempSched[idx];
+      s3Cart = proposedTotal;
+      s3AtpFailed = false;
+      renderApp();
+      showToast('Schedule saved.', 'success');
+    }
+  }
+
+  function s3SugarSlotCh(idx, delta) {
+    if (s3AtpRunning) return;
+    s3SugarTempSched[idx] = Math.max(0, s3SugarTempSched[idx] + delta);
+    s3Edited = true;
+    s3AtpFailed = false;
+    renderApp();
+  }
+
+  function s3SugarSlotSave(idx) {
+    if (s3AtpRunning) return;
+
+    const proposedTotal = s3SugarTempSched[idx];
+    const delta = proposedTotal - s3SugarCart;
+
+    if (delta > 0) {
+      s3AtpRunning = true;
+      s3AtpFailed = false;
+      s3ErrorProductType = 'sugar';
+      renderApp();
+
+      setTimeout(() => {
+        s3AtpRunning = false;
+        if (simStockStatus !== 'ok' && proposedTotal > 5) {
+          s3AtpFailed = true;
+          s3ErrorSlotIdx = idx;
+          s3ErrorProductType = 'sugar';
+          s3ErrorDelta = delta;
+          s3ErrorModalShown = true;
+          document.querySelector('.mobile-viewport').classList.add('pulse-error');
+          setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
+          showToast('Stock check failed. Insufficient stock available.', 'error');
+        } else {
+          s3AtpFailed = false;
+          s3SugarSched[idx] = s3SugarTempSched[idx];
+          s3SugarCart = proposedTotal;
+          showToast('Cart quantity updated to match your schedule.', 'success');
+        }
+        renderApp();
+      }, 800);
+    } else {
+      s3SugarSched[idx] = s3SugarTempSched[idx];
+      s3SugarCart = proposedTotal;
+      s3AtpFailed = false;
+      renderApp();
+      showToast('Schedule saved.', 'success');
+    }
+  }
+
+  function s3RevertSlot() {
+    if (s3ErrorSlotIdx !== null) {
+      if (s3ErrorProductType === 'oil') {
+        s3TempSched[s3ErrorSlotIdx] = s3Sched[s3ErrorSlotIdx];
+      } else {
+        s3SugarTempSched[s3ErrorSlotIdx] = s3SugarSched[s3ErrorSlotIdx];
+      }
+    }
+    s3ErrorModalShown = false;
+    s3AtpFailed = false;
+    renderApp();
+    showToast('Slot quantity reverted to previous value.', 'success');
+  }
+
+  function s3CartCh(delta) {
+    if (s3AtpRunning) return;
+    s3Cart = Math.max(0, s3Cart + delta);
+    s3AtpFailed = false;
+    renderApp();
+  }
+
+  function s3CartSet(val) {
+    if (s3AtpRunning) return;
+    let intVal = parseInt(val) || 0;
+    s3Cart = Math.max(0, intVal);
+    s3AtpFailed = false;
+    renderApp();
+  }
+
+  function s3SugarCartCh(delta) {
+    if (s3AtpRunning) return;
+    s3SugarCart = Math.max(0, s3SugarCart + delta);
+    s3AtpFailed = false;
+    renderApp();
+  }
+
+  function s3SugarCartSet(val) {
+    if (s3AtpRunning) return;
+    let intVal = parseInt(val) || 0;
+    s3SugarCart = Math.max(0, intVal);
+    s3AtpFailed = false;
+    renderApp();
+  }
+
+  function s3Submit() {
+    if (s3AtpRunning) return;
+    const hasUnsaved = s3TempSched[0] !== s3Sched[0] || s3TempSched[1] !== s3Sched[1] || s3SugarTempSched[0] !== s3SugarSched[0];
+    if (hasUnsaved) {
+      document.querySelector('.mobile-viewport').classList.add('pulse-error');
+      setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
+      showToast('Please save all schedule changes before submitting.', 'warn');
+      return;
+    }
+    showToast('✓ Order submitted successfully!', 'success');
+    initScenario(3);
+  }
+
+  /* ==================== SCENARIO 4 RENDERING (COMBINED) ==================== */
+  function renderS4() {
+    const screen = document.getElementById('screen-content');
+
+    // Calculate totals & differences
+    const oilTot = s4Sched.reduce((a,b)=>a+b, 0);
+    const sugarTot = s4SugarSched.reduce((a,b)=>a+b, 0);
+
+    const oilDiff = oilTot - s4Cart;
+    const sugarDiff = sugarTot - s4SugarCart;
+
+    // Draw Cart Banners (mismatch & check status)
+    if (oilDiff > 0 || sugarDiff > 0) {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner warn';
+      banner.innerHTML = '⚠ Some items have scheduled quantities exceeding their cart quantity. Please check and update them below.';
+      screen.appendChild(banner);
+    }
+
+    const excessOil = s4Cart - 10;
+    const excessSugar = s4SugarCart - 5;
+    const totalExcess = (excessOil > 0 ? excessOil : 0) + (excessSugar > 0 ? excessSugar : 0);
+
+    const unallocatedOil = Math.max(0, s4Cart - oilTot);
+    const unallocatedSugar = Math.max(0, s4SugarCart - sugarTot);
+    const remainingUnallocated = unallocatedOil + unallocatedSugar;
+
+    if (s4AtpChecked === 'fail') {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner err';
+      banner.textContent = '⚠ Stock check failed: Insufficient stock available for the increased quantity (+' + totalExcess + ' units).';
+      screen.appendChild(banner);
+    } else if (s4AtpChecked === 'ok' && remainingUnallocated > 0) {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner ok';
+      banner.textContent = '✓ Stock verified successfully. Please allocate the extra ' + remainingUnallocated + ' units.';
+      screen.appendChild(banner);
+    } else if (s4AtpChecked !== 'ok' && s4AtpChecked !== 'fail') {
+      const banner = document.createElement('div');
+      banner.className = 'm-banner warn';
+      banner.innerHTML = '⚠ Please click <strong>"+ Add Delivery"</strong> to run stock verification.';
+      screen.appendChild(banner);
+    }
+
+    // Status Tags (none shown before checking, only ok/fail when checked)
+    let statusTag = '';
+    if (s4AtpChecked === 'ok') {
+      statusTag = '<div class="status-tag ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><polyline points="9 11 12 14 17 9"></polyline></svg> In Stock</div>';
+    } else if (s4AtpChecked === 'fail') {
+      statusTag = '<div class="status-tag fail"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg> Insufficient Stock</div>';
+    }
+
+    // 1. Olive Oil Card
+    const oilCard = document.createElement('div');
+    oilCard.className = 'product-list-card';
+    oilCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${oilSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Olive Oil Extra Virgin Olivoilà 250ML</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Olive</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) / 800G (NW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (BOX)</span>
+            <span class="price-main">$12 <span class="price-old">$13.60</span></span>
+            <div class="total-box">Total: $${(s4Cart * 12).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s4CartCh(-1)" ${s4Cart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s4Cart}" onchange="s4CartSet(this.value)">
+              <button class="m-qb" onclick="s4CartCh(1)">+</button>
+            </div>
+            ${s4Cart - oilTot > 0 ? `
+              <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
+                Unallocated: ${s4Cart - oilTot}
+              </div>
+            ` : ''}
+            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${oilTot} / Max: ${s4Cart}</div>` : ''}
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M12 2L15 5L19 4L18 8L21 11L17 12L16 16L12 15L8 16L7 12L3 11L6 8L5 4L9 5L12 2z"></path></svg>
+            10% Off For 1 Bread Product: -$0.29
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $0.20
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(oilCard);
+
+    // 2. Sugar Card
+    const sugarCard = document.createElement('div');
+    sugarCard.className = 'product-list-card';
+    sugarCard.innerHTML = `
+      <div class="product-group-header" style="display: flex; align-items: center; gap: 8px; padding: 12px 12px 0 12px;">
+        <div class="product-img">${sugarSvg}</div>
+        <div class="product-info">
+          <span class="product-title" style="font-size: 11px; font-weight: 700; color: var(--mobile-text-dark);">Sugar Bag Premium White 1KG</span>
+          <span class="product-brand" style="font-size: 9px; color: var(--mobile-text-secondary); display: block;">Brand: Sugar</span>
+        </div>
+      </div>
+      <div class="pack-size-box" style="margin: 8px 12px 8px 12px; font-size: 9px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Pack Size: IN 10 X 1KG (GW) BAG PER CAR
+      </div>
+      <div class="product-row" style="border-top: 1px solid #f1f5f9; margin-top: 4px;">
+        ${statusTag}
+        <div class="price-qty-row">
+          <div class="price-section">
+            <span class="price-uom">UOM (CS)</span>
+            <span class="price-main">$52.08 <span class="price-old">$54.08</span></span>
+            <div class="total-box">Total: $${(s4SugarCart * 52.08).toFixed(1)}</div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div class="m-qc">
+              <button class="m-qb" onclick="s4SugarCartCh(-1)" ${s4SugarCart <= 1 ? 'disabled' : ''}>−</button>
+              <input type="text" class="m-qv" value="${s4SugarCart}" onchange="s4SugarCartSet(this.value)">
+              <button class="m-qb" onclick="s4SugarCartCh(1)">+</button>
+            </div>
+            ${s4SugarCart - sugarTot > 0 ? `
+              <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
+                Unallocated: ${s4SugarCart - sugarTot}
+              </div>
+            ` : ''}
+            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${sugarTot} / Max: ${s4SugarCart}</div>` : ''}
+          </div>
+        </div>
+        <div class="sub-details">
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            $1 Off ADC Flavored Coffee: -$1.00
+          </div>
+          <div class="sub-detail-row">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; flex-shrink:0;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+            BCRS Deposit: $12.00
+          </div>
+        </div>
+      </div>
+    `;
+    screen.appendChild(sugarCard);
+
+    // 3. Delivery Schedule Card
+    const isLocked = s4AtpChecked !== 'ok';
+    const schedCard = document.createElement('div');
+    schedCard.className = 'section-card';
+    schedCard.id = 's4-sched-card';
+    schedCard.innerHTML = `
+      <div class="section-header">Delivery Schedule</div>
+      <div class="section-body">
+        <div class="atp-loader ${s4AtpRunning ? '' : 'hide'}" id="s4-loader-el" style="margin-bottom:8px">
+          <div class="m-spinner"></div> <span style="font-size:9.5px">${s4ErrorProductType === 'oil' ? 'Checking stock for Olive Oil...' : s4ErrorProductType === 'sugar' ? 'Checking stock for Sugar Bag...' : 'Querying live stock allocations...'}</span>
+        </div>
+        
+        <div style="opacity: ${isLocked || s4AtpRunning ? '0.6' : '1'}; pointer-events: ${isLocked || s4AtpRunning ? 'none' : 'auto'}; transition: opacity 0.2s;">
+          ${(() => {
+            const oilUv = s4Cart - (s4TempSched[0] + s4TempSched[1]);
+            const sugarUv = s4SugarCart - s4SugarTempSched[0];
+            return `
+              <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Olive Oil 250ML</div>
+              <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+                <div class="m-qc">
+                  <button class="m-qb" onclick="s4SlotCh(0, -1)" ${isLocked || s4AtpRunning || s4TempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+                  <input type="text" class="m-qv" value="${s4TempSched[0]}" readonly>
+                  <button class="m-qb" onclick="s4SlotCh(0, 1)" ${isLocked || s4AtpRunning ? 'disabled' : ''}>+</button>
+                </div>
+                <button class="m-save-btn" onclick="s4SlotSave(0);" ${isLocked || s4AtpRunning || s4TempSched[0] === s4Sched[0] ? 'disabled' : ''}>Save</button>
+              </div>
+              <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="sdate" style="flex:1;">Wed 18 Jun</span>
+                <div class="m-qc">
+                  <button class="m-qb" onclick="s4SlotCh(1, -1)" ${isLocked || s4AtpRunning || s4TempSched[1] <= 0 ? 'disabled' : ''}>−</button>
+                  <input type="text" class="m-qv" value="${s4TempSched[1]}" readonly>
+                  <button class="m-qb" onclick="s4SlotCh(1, 1)" ${isLocked || s4AtpRunning ? 'disabled' : ''}>+</button>
+                </div>
+                <button class="m-save-btn" onclick="s4SlotSave(1);" ${isLocked || s4AtpRunning || s4TempSched[1] === s4Sched[1] ? 'disabled' : ''}>Save</button>
+              </div>
+
+              <div style="margin-bottom:12px"></div>
+              <div style="font-size:11px;font-weight:700;color:var(--mobile-text-dark);margin-bottom:4px">Sugar Bag 1KG</div>
+              <div class="slot-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="sdate" style="flex:1;">Mon 16 Jun</span>
+                <div class="m-qc">
+                  <button class="m-qb" onclick="s4SugarSlotCh(0, -1)" ${isLocked || s4AtpRunning || s4SugarTempSched[0] <= 0 ? 'disabled' : ''}>−</button>
+                  <input type="text" class="m-qv" value="${s4SugarTempSched[0]}" readonly>
+                  <button class="m-qb" onclick="s4SugarSlotCh(0, 1)" ${isLocked || s4AtpRunning ? 'disabled' : ''}>+</button>
+                </div>
+                <button class="m-save-btn" onclick="s4SugarSlotSave(0);" ${isLocked || s4AtpRunning || s4SugarTempSched[0] === s4SugarSched[0] ? 'disabled' : ''}>Save</button>
+              </div>
+            `;
+          })()}
+        </div>
+
+        <button class="add-deli-btn" style="margin-top: 12px; width: 100%; cursor: pointer;" onclick="s4ClickCard()" ${!isLocked ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
+          <span class="plus-icon-circle">+</span> Add Delivery
+        </button>
+      </div>
+    `;
+    screen.appendChild(schedCard);
+
+    // 4. Order Summary Card
+    const sub = (s4Cart * 12.00) + (s4SugarCart * 52.08);
+    const savings = (s4Cart > 0 ? 0.29 : 0) + (s4SugarCart > 0 ? 1.00 : 0);
+    const gst = sub * 0.09;
+    const total = sub - savings + gst;
+
+    const summaryCard = document.createElement('div');
+    summaryCard.className = 'section-card';
+    summaryCard.innerHTML = `
+      <div class="section-header">Order Summary</div>
+      <div class="section-body">
+        <table class="summary-table">
+          <tr><td>Items</td><td align="right">${s4Cart + s4SugarCart}</td></tr>
+          <tr><td>Subtotal</td><td align="right">$${sub.toFixed(2)}</td></tr>
+          <tr><td>Savings</td><td align="right">-$${savings.toFixed(2)}</td></tr>
+          <tr><td>Delivery Fee</td><td align="right">$0.00</td></tr>
+          <tr><td>GST (9%)</td><td align="right">$${gst.toFixed(2)}</td></tr>
+          <tr class="total-row"><td>Total</td><td align="right">$${total.toFixed(2)}</td></tr>
+        </table>
+      </div>
+    `;
+    screen.appendChild(summaryCard);
+
+    // 5. Submit Button
+    const isS4SubmitDisabled = s4AtpRunning || s4AtpFailed || s4AtpChecked !== 'ok';
+    const submitContainer = document.createElement('div');
+    submitContainer.className = 'm-submit-container';
+    submitContainer.innerHTML = `
+      <button class="submit-btn" onclick="s4Submit()" ${isS4SubmitDisabled ? 'disabled' : ''}>Submit</button>
+    `;
+    screen.appendChild(submitContainer);
+
+    // Confirmation Modal for reduction
+    if (s4ConfirmModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      let title = 'Reduce Cart Quantity';
+      let desc = '';
+      if (s4ProposedProductType === 'oil') {
+        desc = `You are reducing the cart quantity of Olive Oil to <strong>${s4ProposedCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+      } else {
+        desc = `You are reducing the cart quantity of Sugar to <strong>${s4ProposedSugarCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+      }
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title">${title}</div>
+          <div class="m-modal-desc">${desc}</div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <button class="m-modal-btn pri" onclick="s4ConfirmReduce()">Confirm</button>
+              <button class="m-modal-btn" onclick="s4CancelReduce()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+
+    // Submit Mismatch Modal (Under or Over-allocated)
+    if (s4SubmitModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      
+      let listItems = '';
+      const oilDiff = oilTot - s4Cart;
+      const sugarDiff = sugarTot - s4SugarCart;
+      
+      if (oilDiff > 0) {
+        listItems += `<li><strong>Olive Oil:</strong> ${oilDiff} units are overallocated.</li>`;
+      } else if (oilDiff < 0) {
+        listItems += `<li><strong>Olive Oil:</strong> ${Math.abs(oilDiff)} units remain unassigned.</li>`;
+      }
+      
+      if (sugarDiff > 0) {
+        listItems += `<li><strong>Sugar Bag:</strong> ${sugarDiff} units are overallocated.</li>`;
+      } else if (sugarDiff < 0) {
+        listItems += `<li><strong>Sugar Bag:</strong> ${Math.abs(sugarDiff)} units remain unassigned.</li>`;
+      }
+
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title">Resolve Quantity Mismatches</div>
+          <div class="m-modal-desc">
+            The following items have schedule/cart quantity mismatches:
+            <ul style="margin: 10px 0; padding-left: 20px; font-size: 10px; text-align: left; line-height: 1.5; color: var(--mobile-text-dark);">
+              ${listItems}
+            </ul>
+            Choose an action to proceed:
+          </div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button class="m-modal-btn" onclick="s4SubmitModalShown = false; renderApp();">Cancel</button>
+              <button class="m-modal-btn pri" onclick="s4SyncQuantities()">Sync Cart Qty</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+
+    // Error Modal for Scenario 4 ATP check failure
+    if (s4ErrorModalShown) {
+      const overlay = document.createElement('div');
+      overlay.className = 'm-modal-overlay';
+      overlay.innerHTML = `
+        <div class="m-modal-card">
+          <div class="m-modal-title" style="color: var(--mobile-text-danger); font-weight: 700;">⚠ Insufficient Stock</div>
+          <div class="m-modal-desc">
+            There is insufficient stock for the additional <strong>${s4ErrorDelta}</strong> units of ${s4ErrorProductType === 'oil' ? 'Olive Oil' : 'Sugar'}.<br><br>
+            Please revert the slot allocation or choose a different quantity.
+          </div>
+          <div class="m-modal-actions">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button class="m-modal-btn" onclick="s4ErrorModalShown = false; renderApp();">Adjust Qty</button>
+              <button class="m-modal-btn pri" style="background: #ef4444; border-color: #ef4444; color: white;" onclick="s4RevertSlot()">Revert</button>
+            </div>
+          </div>
+        </div>
+      `;
+      screen.appendChild(overlay);
+    }
+  }
+
+  function s4CartCh(delta) {
+    const oilTot = s4Sched.reduce((a,b)=>a+b, 0);
+    const proposed = Math.max(0, s4Cart + delta);
+    if (delta < 0 && proposed < oilTot) {
+      s4ProposedCart = proposed;
+      s4ProposedProductType = 'oil';
+      s4ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s4Cart = proposed;
+      s4AtpChecked = false;
+      if (s4Cart > oilTot) {
+        const diff = s4Cart - oilTot;
+        showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+      }
+      renderApp();
+    }
+  }
+
+  function s4CartSet(val) {
+    const oilTot = s4Sched.reduce((a,b)=>a+b, 0);
+    let intVal = parseInt(val) || 0;
+    intVal = Math.max(0, intVal);
+    if (intVal < s4Cart && intVal < oilTot) {
+      s4ProposedCart = intVal;
+      s4ProposedProductType = 'oil';
+      s4ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s4Cart = intVal;
+      s4AtpChecked = false;
+      if (s4Cart > oilTot) {
+        const diff = s4Cart - oilTot;
+        showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+      }
+      renderApp();
+    }
+  }
+
+  function s4SugarCartCh(delta) {
+    const sugarTot = s4SugarSched.reduce((a,b)=>a+b, 0);
+    const proposed = Math.max(0, s4SugarCart + delta);
+    if (delta < 0 && proposed < sugarTot) {
+      s4ProposedSugarCart = proposed;
+      s4ProposedProductType = 'sugar';
+      s4ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s4SugarCart = proposed;
+      s4AtpChecked = false;
+      if (s4SugarCart > sugarTot) {
+        const diff = s4SugarCart - sugarTot;
+        showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+      }
+      renderApp();
+    }
+  }
+
+  function s4SugarCartSet(val) {
+    const sugarTot = s4SugarSched.reduce((a,b)=>a+b, 0);
+    let intVal = parseInt(val) || 0;
+    intVal = Math.max(0, intVal);
+    if (intVal < s4SugarCart && intVal < sugarTot) {
+      s4ProposedSugarCart = intVal;
+      s4ProposedProductType = 'sugar';
+      s4ConfirmModalShown = true;
+      renderApp();
+    } else {
+      s4SugarCart = intVal;
+      s4AtpChecked = false;
+      if (s4SugarCart > sugarTot) {
+        const diff = s4SugarCart - sugarTot;
+        showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
+      }
+      renderApp();
+    }
+  }
+
+  function s4ConfirmReduce() {
+    if (s4ProposedProductType === 'oil') {
+      s4Cart = s4ProposedCart;
+    } else {
+      s4SugarCart = s4ProposedSugarCart;
+    }
+    s4ConfirmModalShown = false;
+    s4AtpChecked = false;
+    renderApp();
+    showToast('Cart quantity reduced.', 'success');
+  }
+
+  function s4CancelReduce() {
+    s4ConfirmModalShown = false;
+    renderApp();
+  }
+
+  function s4ClickCard() {
+    if (s4AtpChecked === 'ok') return;
+    s4AtpRunning = true;
+    s4ErrorProductType = '';
+    renderApp();
+
+    setTimeout(() => {
+      s4AtpRunning = false;
+
+      const oilTot = s4Sched.reduce((a,b)=>a+b, 0);
+      const sugarTot = s4SugarSched.reduce((a,b)=>a+b, 0);
+      const oilExcess = s4Cart - oilTot;
+      const sugarExcess = s4SugarCart - sugarTot;
+      const hasExcess = oilExcess > 0 || sugarExcess > 0;
+
+      if (simStockStatus === 'warn' && hasExcess) {
+        s4AtpChecked = 'fail';
+        document.querySelector('.mobile-viewport').classList.add('pulse-error');
+        setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
+        showToast('Stock check failed. Insufficient stock available.', 'error');
+      } else {
+        s4AtpChecked = 'ok';
+        showToast('✓ Stock verified successfully. Delivery Schedule unlocked.', 'success');
+
+        setTimeout(() => {
+          const cardEl = document.getElementById('s4-sched-card');
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardEl.style.borderColor = '#006994';
+            cardEl.style.boxShadow = '0 0 0 2px rgba(0, 105, 148, 0.25)';
+            setTimeout(() => {
+              cardEl.style.borderColor = '';
+              cardEl.style.boxShadow = '';
+            }, 1500);
+          }
+        }, 100);
+      }
+      renderApp();
+    }, 1500);
+  }
+
+  function s4SlotCh(idx, delta) {
+    if (s4AtpRunning) return;
+    if (s4AtpChecked !== 'ok') {
+      s4ClickCard();
+      return;
+    }
+    s4TempSched[idx] = Math.max(0, s4TempSched[idx] + delta);
+    renderApp();
+  }
+
+  function s4SlotSave(idx) {
+    if (s4AtpRunning) return;
+
+    const proposedTotal = s4TempSched[idx] + s4Sched[1 - idx];
+    const delta = proposedTotal - s4Cart;
+
+    if (delta > 0) {
+      s4AtpRunning = true;
+      s4AtpFailed = false;
+      renderApp();
+
+      setTimeout(() => {
+        s4AtpRunning = false;
+        if (simStockStatus !== 'ok' && proposedTotal > 10) {
+          s4AtpFailed = true;
+          s4ErrorSlotIdx = idx;
+          s4ErrorProductType = 'oil';
+          s4ErrorDelta = delta;
+          s4ErrorModalShown = true;
+          document.querySelector('.mobile-viewport').classList.add('pulse-error');
+          setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
+          showToast('Stock check failed. Insufficient stock available.', 'error');
+        } else {
+          s4AtpFailed = false;
+          s4Sched[idx] = s4TempSched[idx];
+          s4Cart = proposedTotal;
+          s4AtpChecked = 'ok';
+          showToast('Cart quantity updated to match your schedule.', 'success');
+        }
+        renderApp();
+      }, 800);
+    } else {
+      s4Sched[idx] = s4TempSched[idx];
+      s4Cart = proposedTotal;
+      s4AtpFailed = false;
+      renderApp();
+      showToast('Schedule saved.', 'success');
+    }
+  }
+
+  function s4SugarSlotCh(idx, delta) {
+    if (s4AtpRunning) return;
+    if (s4AtpChecked !== 'ok') {
+      s4ClickCard();
+      return;
+    }
+    s4SugarTempSched[idx] = Math.max(0, s4SugarTempSched[idx] + delta);
+    renderApp();
+  }
+
+  function s4SugarSlotSave(idx) {
+    if (s4AtpRunning) return;
+
+    const proposedTotal = s4SugarTempSched[idx];
+    const delta = proposedTotal - s4SugarCart;
+
+    if (delta > 0) {
+      s4AtpRunning = true;
+      s4AtpFailed = false;
+      renderApp();
+
+      setTimeout(() => {
+        s4AtpRunning = false;
+        if (simStockStatus !== 'ok' && proposedTotal > 5) {
+          s4AtpFailed = true;
+          s4ErrorSlotIdx = idx;
+          s4ErrorProductType = 'sugar';
+          s4ErrorDelta = delta;
+          s4ErrorModalShown = true;
+          document.querySelector('.mobile-viewport').classList.add('pulse-error');
+          setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
+          showToast('Stock check failed. Insufficient stock available.', 'error');
+        } else {
+          s4AtpFailed = false;
+          s4SugarSched[idx] = s4SugarTempSched[idx];
+          s4SugarCart = proposedTotal;
+          s4AtpChecked = 'ok';
+          showToast('Cart quantity updated to match your schedule.', 'success');
+        }
+        renderApp();
+      }, 800);
+    } else {
+      s4SugarSched[idx] = s4SugarTempSched[idx];
+      s4SugarCart = proposedTotal;
+      s4AtpFailed = false;
+      renderApp();
+      showToast('Schedule saved.', 'success');
+    }
+  }
+
+  function s4RevertSlot() {
+    if (s4ErrorSlotIdx !== null) {
+      if (s4ErrorProductType === 'oil') {
+        s4TempSched[s4ErrorSlotIdx] = s4Sched[s4ErrorSlotIdx];
+      } else {
+        s4SugarTempSched[s4ErrorSlotIdx] = s4SugarSched[s4ErrorSlotIdx];
+      }
+    }
+    s4ErrorModalShown = false;
+    s4AtpFailed = false;
+    renderApp();
+  }
+
+  function s4Submit() {
+    s4Sched = [...s4TempSched];
+    s4SugarSched = [...s4SugarTempSched];
+    const oilTot = s4Sched.reduce((a,b)=>a+b, 0);
+    const sugarTot = s4SugarSched.reduce((a,b)=>a+b, 0);
+    if (oilTot !== s4Cart || sugarTot !== s4SugarCart) {
+      s4SubmitModalShown = true;
+      renderApp();
+    } else {
+      showToast('✓ Order submitted successfully!', 'success');
+      initScenario(4);
+    }
+  }
+
+  function s4SyncQuantities() {
+    s4SubmitModalShown = false;
+    s4Cart = s4Sched.reduce((a,b)=>a+b, 0);
+    s4SugarCart = s4SugarSched.reduce((a,b)=>a+b, 0);
+    s4TempSched = [...s4Sched];
+    s4SugarTempSched = [...s4SugarSched];
+    renderApp();
+    showToast('Cart quantities synchronized to match schedules.', 'success');
+  }
+
+
+
+
+  // Initial Theme Setup from local storage
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.body.classList.add('light');
+  } else {
+    document.body.classList.remove('light');
+  }
+
+  // Load default scenario tab 1
+  sw(1);
+</script>
+
+</body>
+</html>
