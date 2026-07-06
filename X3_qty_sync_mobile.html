@@ -1124,10 +1124,10 @@
           Scenario Navigator
         </div>
         <div class="tabs">
-          <button class="tab on" onclick="sw(1)">Sc1 — Cart Increased</button>
+          <button class="tab" onclick="sw(1)">Sc1 — Cart Increased</button>
           <button class="tab" onclick="sw(2)">Sc2 — Cart Decreased</button>
           <button class="tab" onclick="sw(3)">Sc3 — Schedule Qty Increased Beyond Cart Total</button>
-          <button class="tab" onclick="sw(4)">Sc4 — Qty Increased & Decreased (Combined)</button>
+          <button class="tab on" onclick="sw(4)">Sc4 — Qty Increased & Decreased (Combined)</button>
         </div>
       </div>
 
@@ -1170,7 +1170,7 @@
 <script>
   // Global States
   let simStockStatus = 'ok'; // 'ok', 'warn', 'oos'
-  let activeTab = 1;
+  let activeTab = 4;
   let toastTimeout = null;
 
   // Global variables mapping the simulator logic
@@ -3332,8 +3332,8 @@
     document.body.classList.remove('light');
   }
 
-  // Load default scenario tab 1
-  sw(1);
+  // Load default scenario tab 4
+  sw(4);
 </script>
 
 </body>
