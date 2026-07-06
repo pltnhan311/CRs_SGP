@@ -1526,7 +1526,7 @@
     } else if (s1AtpChecked === 'ok' && remainingUnallocated > 0) {
       const banner = document.createElement('div');
       banner.className = 'm-banner ok';
-      banner.textContent = '✓ Stock verified successfully. Please allocate the extra ' + remainingUnallocated + ' units.';
+      banner.textContent = '✓ Stock verified successfully. Please allocate the remaining units to your delivery slots below.';
       screen.insertBefore(banner, custCard);
     } else if (s1AtpChecked !== 'ok' && s1AtpChecked !== 'fail') {
       const banner = document.createElement('div');
@@ -2794,7 +2794,7 @@
     } else if (s4AtpChecked === 'ok' && remainingUnallocated > 0) {
       const banner = document.createElement('div');
       banner.className = 'm-banner ok';
-      banner.textContent = '✓ Stock verified successfully. Please allocate the extra ' + remainingUnallocated + ' units.';
+      banner.textContent = '✓ Stock verified successfully. Please allocate the remaining units to your delivery slots below.';
       screen.insertBefore(banner, custCard);
     } else if (s4AtpChecked !== 'ok' && s4AtpChecked !== 'fail') {
       const banner = document.createElement('div');
