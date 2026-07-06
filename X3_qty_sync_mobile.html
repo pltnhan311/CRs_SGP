@@ -1901,7 +1901,6 @@
       }, 800);
     } else {
       s1Sched[idx] = s1TempSched[idx];
-      if (proposedTotal < s1Cart) s1Cart = proposedTotal;
       renderApp();
       showToast('Schedule saved.', 'success');
     }
@@ -1945,7 +1944,6 @@
       }, 800);
     } else {
       s1SugarSched[idx] = s1SugarTempSched[idx];
-      if (proposedTotal < s1SugarCart) s1SugarCart = proposedTotal;
       renderApp();
       showToast('Schedule saved.', 'success');
     }
