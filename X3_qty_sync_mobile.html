@@ -1593,7 +1593,7 @@
             </div>
             ${s1Cart - s1Allocated > 0 ? `
               <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
-                Unallocated: ${s1Cart - s1Allocated}
+                Unallocated: ${s1Cart - s1Allocated} BOX
               </div>
             ` : ''}
           </div>
@@ -1642,7 +1642,7 @@
             </div>
             ${s1SugarCart - s1SugarAllocated > 0 ? `
               <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
-                Unallocated: ${s1SugarCart - s1SugarAllocated}
+                Unallocated: ${s1SugarCart - s1SugarAllocated} CS
               </div>
             ` : ''}
           </div>
@@ -2513,7 +2513,7 @@
               <button class="m-qb" onclick="s3CartCh(1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
             </div>
             <div style="font-size: 10px; font-weight: 700; color: ${warnColor}; text-align: right;">
-              ${totTemp > s3Cart ? `+${totTemp - s3Cart} exceeds cart` : uv > 0 ? `Unallocated: ${uv}` : 'Aligned'}
+              ${totTemp > s3Cart ? `+${totTemp - s3Cart} BOX exceeds cart` : uv > 0 ? `Unallocated: ${uv} BOX` : 'Aligned'}
             </div>
           </div>
         </div>
@@ -2561,7 +2561,7 @@
               <button class="m-qb" onclick="s3SugarCartCh(1)" ${s3AtpRunning ? 'disabled' : ''}>+</button>
             </div>
             <div style="font-size: 10px; font-weight: 700; color: ${sugarWarnColor}; text-align: right;">
-              ${sugarTotTemp > s3SugarCart ? `+${sugarTotTemp - s3SugarCart} exceeds cart` : sugarUv > 0 ? `Unallocated: ${sugarUv}` : 'Aligned'}
+              ${sugarTotTemp > s3SugarCart ? `+${sugarTotTemp - s3SugarCart} CS exceeds cart` : sugarUv > 0 ? `Unallocated: ${sugarUv} CS` : 'Aligned'}
             </div>
           </div>
         </div>
@@ -2933,10 +2933,10 @@
             </div>
             ${s4Cart - oilTot > 0 ? `
               <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
-                Unallocated: ${s4Cart - oilTot}
+                Unallocated: ${s4Cart - oilTot} BOX
               </div>
             ` : ''}
-            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${oilTot} / Max: ${s4Cart}</div>` : ''}
+            ${oilDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${oilTot} BOX / Max: ${s4Cart} BOX</div>` : ''}
           </div>
         </div>
         <div class="sub-details">
@@ -2983,10 +2983,10 @@
             </div>
             ${s4SugarCart - sugarTot > 0 ? `
               <div style="font-size: 10px; font-weight: 700; color: #d97706; text-align: right;">
-                Unallocated: ${s4SugarCart - sugarTot}
+                Unallocated: ${s4SugarCart - sugarTot} CS
               </div>
             ` : ''}
-            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${sugarTot} / Max: ${s4SugarCart}</div>` : ''}
+            ${sugarDiff > 0 ? `<div style="font-size: 10px; font-weight: 700; color: #b91c1c; text-align: right;">Allocated: ${sugarTot} CS / Max: ${s4SugarCart} CS</div>` : ''}
           </div>
         </div>
         <div class="sub-details">
