@@ -1785,6 +1785,7 @@
     s1Cart = Math.max(0, s1Cart + delta);
     const allocated = s1Sched.reduce((a,b)=>a+b, 0);
     s1AtpChecked = false;
+    s1AtpFailed = false;
     if (s1Cart > allocated) {
       const diff = s1Cart - allocated;
       showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -1797,6 +1798,7 @@
     s1Cart = Math.max(0, intVal);
     const allocated = s1Sched.reduce((a,b)=>a+b, 0);
     s1AtpChecked = false;
+    s1AtpFailed = false;
     if (s1Cart > allocated) {
       const diff = s1Cart - allocated;
       showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -1808,6 +1810,7 @@
     s1SugarCart = Math.max(0, s1SugarCart + delta);
     const allocated = s1SugarSched.reduce((a,b)=>a+b, 0);
     s1AtpChecked = false;
+    s1AtpFailed = false;
     if (s1SugarCart > allocated) {
       const diff = s1SugarCart - allocated;
       showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -1820,6 +1823,7 @@
     s1SugarCart = Math.max(0, intVal);
     const allocated = s1SugarSched.reduce((a,b)=>a+b, 0);
     s1AtpChecked = false;
+    s1AtpFailed = false;
     if (s1SugarCart > allocated) {
       const diff = s1SugarCart - allocated;
       showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -3159,6 +3163,7 @@
     } else {
       s4Cart = proposed;
       s4AtpChecked = false;
+      s4AtpFailed = false;
       if (s4Cart > oilTot) {
         const diff = s4Cart - oilTot;
         showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -3179,6 +3184,7 @@
     } else {
       s4Cart = intVal;
       s4AtpChecked = false;
+      s4AtpFailed = false;
       if (s4Cart > oilTot) {
         const diff = s4Cart - oilTot;
         showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -3198,6 +3204,7 @@
     } else {
       s4SugarCart = proposed;
       s4AtpChecked = false;
+      s4AtpFailed = false;
       if (s4SugarCart > sugarTot) {
         const diff = s4SugarCart - sugarTot;
         showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
@@ -3218,6 +3225,7 @@
     } else {
       s4SugarCart = intVal;
       s4AtpChecked = false;
+      s4AtpFailed = false;
       if (s4SugarCart > sugarTot) {
         const diff = s4SugarCart - sugarTot;
         showToast('Quantity increased by ' + diff + '. Please update your schedule.', 'warn');
