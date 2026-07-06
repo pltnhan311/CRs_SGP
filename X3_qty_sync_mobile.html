@@ -2007,7 +2007,12 @@
     if (oilDiff > 0 || sugarDiff > 0) {
       const banner = document.createElement('div');
       banner.className = 'm-banner warn';
-      banner.innerHTML = '⚠ Some items have scheduled quantities exceeding their cart quantity. Please check and update them below.';
+      banner.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+          <div>• Some items have scheduled quantities exceeding their cart quantity.</div>
+          <div>• Please check and update them below.</div>
+        </div>
+      `;
       screen.insertBefore(banner, custCard);
     }
 
@@ -2840,7 +2845,12 @@
     if (oilDiff > 0 || sugarDiff > 0) {
       const banner = document.createElement('div');
       banner.className = 'm-banner warn';
-      banner.innerHTML = '⚠ Some items have scheduled quantities exceeding their cart quantity. Please check and update them below.';
+      banner.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+          <div>• Some items have scheduled quantities exceeding their cart quantity.</div>
+          <div>• Please check and update them below.</div>
+        </div>
+      `;
       screen.insertBefore(banner, custCard);
     }
 
