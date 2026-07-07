@@ -1157,9 +1157,9 @@
           Scenario Navigator
         </div>
         <div class="tabs">
-          <button class="tab" onclick="sw(1)">Sc1 — Cart Increased</button>
-          <button class="tab" onclick="sw(2)">Sc2 — Cart Decreased</button>
-          <button class="tab" onclick="sw(3)">Sc3 — Schedule Qty Increased Beyond Cart Total</button>
+          <button class="tab" onclick="sw(1)" style="display: none;">Sc1 — Cart Increased</button>
+          <button class="tab" onclick="sw(2)" style="display: none;">Sc2 — Cart Decreased</button>
+          <button class="tab" onclick="sw(3)" style="display: none;">Sc3 — Schedule Qty Increased Beyond Cart Total</button>
           <button class="tab on" onclick="sw(4)">Sc4 — Qty Increased & Decreased (Combined)</button>
         </div>
       </div>
@@ -1173,9 +1173,9 @@
         <div class="atp-options">
           <button class="atp-opt active" id="atp-ok" onclick="setAtpStatus('ok')">All Available</button>
           <button class="atp-opt" id="atp-warn" onclick="setAtpStatus('warn')">Insufficient Stock (Oil=8, Sugar=In-stock)</button>
-          <button class="atp-opt" id="atp-oos" onclick="setAtpStatus('oos')">Out of Stock (Oil=In-stock, Sugar=OOS)</button>
-          <button class="atp-opt" id="atp-full-oos" onclick="setAtpStatus('full-oos')">All Out of Stock (Both OOS)</button>
-          <button class="atp-opt" id="atp-mix" onclick="setAtpStatus('mix')">Mixed (Oil=8, Sugar=OOS, Noodles=In-stock)</button>
+          <button class="atp-opt" id="atp-oos" onclick="setAtpStatus('oos')" style="display: none;">Out of Stock (Oil=In-stock, Sugar=OOS)</button>
+          <button class="atp-opt" id="atp-full-oos" onclick="setAtpStatus('full-oos')" style="display: none;">All Out of Stock (Both OOS)</button>
+          <button class="atp-opt" id="atp-mix" onclick="setAtpStatus('mix')" style="display: none;">Mixed (Oil=8, Sugar=OOS, Noodles=In-stock)</button>
         </div>
       </div>
 
