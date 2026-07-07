@@ -1813,6 +1813,9 @@
         s1AtpChecked = 'ok';
         s1AtpFailed = false;
       }
+      if (delta < 0) {
+        showToast('Cart quantity updated.', 'success');
+      }
     }
     renderApp();
   }
@@ -1834,6 +1837,9 @@
         s1AtpChecked = 'ok';
         s1AtpFailed = false;
       }
+      if (s1Cart < oldCart) {
+        showToast('Cart quantity updated.', 'success');
+      }
     }
     renderApp();
   }
@@ -1853,6 +1859,9 @@
       if (s1Cart <= 10 && s1SugarCart <= 5) {
         s1AtpChecked = 'ok';
         s1AtpFailed = false;
+      }
+      if (delta < 0) {
+        showToast('Cart quantity updated.', 'success');
       }
     }
     renderApp();
@@ -1874,6 +1883,9 @@
       if (s1Cart <= 10 && s1SugarCart <= 5) {
         s1AtpChecked = 'ok';
         s1AtpFailed = false;
+      }
+      if (s1SugarCart < oldCart) {
+        showToast('Cart quantity updated.', 'success');
       }
     }
     renderApp();
@@ -2332,6 +2344,8 @@
       s2Cart = proposed;
       if (delta > 0) {
         s2AtpChecked = false;
+      } else if (delta < 0) {
+        showToast('Cart quantity updated.', 'success');
       }
       renderApp();
     }
@@ -2348,9 +2362,12 @@
       renderApp();
     } else {
       const isIncrease = intVal > s2Cart;
+      const isDecrease = intVal < s2Cart;
       s2Cart = intVal;
       if (isIncrease) {
         s2AtpChecked = false;
+      } else if (isDecrease) {
+        showToast('Cart quantity updated.', 'success');
       }
       renderApp();
     }
@@ -2368,6 +2385,8 @@
       s2SugarCart = proposed;
       if (delta > 0) {
         s2AtpChecked = false;
+      } else if (delta < 0) {
+        showToast('Cart quantity updated.', 'success');
       }
       renderApp();
     }
@@ -2384,9 +2403,12 @@
       renderApp();
     } else {
       const isIncrease = intVal > s2SugarCart;
+      const isDecrease = intVal < s2SugarCart;
       s2SugarCart = intVal;
       if (isIncrease) {
         s2AtpChecked = false;
+      } else if (isDecrease) {
+        showToast('Cart quantity updated.', 'success');
       }
       renderApp();
     }
@@ -3250,6 +3272,9 @@
           s4AtpChecked = 'ok';
           s4AtpFailed = false;
         }
+        if (delta < 0) {
+          showToast('Cart quantity updated.', 'success');
+        }
       }
       renderApp();
     }
@@ -3266,6 +3291,7 @@
       renderApp();
     } else {
       const isIncrease = intVal > s4Cart;
+      const isDecrease = intVal < s4Cart;
       s4Cart = intVal;
       if (isIncrease) {
         s4AtpChecked = false;
@@ -3276,6 +3302,9 @@
         if (s4Cart <= 10 && s4SugarCart <= 5) {
           s4AtpChecked = 'ok';
           s4AtpFailed = false;
+        }
+        if (isDecrease) {
+          showToast('Cart quantity updated.', 'success');
         }
       }
       renderApp();
@@ -3302,6 +3331,9 @@
           s4AtpChecked = 'ok';
           s4AtpFailed = false;
         }
+        if (delta < 0) {
+          showToast('Cart quantity updated.', 'success');
+        }
       }
       renderApp();
     }
@@ -3318,6 +3350,7 @@
       renderApp();
     } else {
       const isIncrease = intVal > s4SugarCart;
+      const isDecrease = intVal < s4SugarCart;
       s4SugarCart = intVal;
       if (isIncrease) {
         s4AtpChecked = false;
@@ -3328,6 +3361,9 @@
         if (s4Cart <= 10 && s4SugarCart <= 5) {
           s4AtpChecked = 'ok';
           s4AtpFailed = false;
+        }
+        if (isDecrease) {
+          showToast('Cart quantity updated.', 'success');
         }
       }
       renderApp();
