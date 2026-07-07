@@ -1544,7 +1544,7 @@
       banner.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
           <div>• Stock verified successfully.</div>
-          <div>• Please allocate the remaining units to your delivery slots below.</div>
+          <div>• Please allocate the remaining units to your delivery schedule below.</div>
         </div>
       `;
       screen.insertBefore(banner, custCard);
@@ -1862,7 +1862,7 @@
         showToast('Stock verification failed. See details above.', 'error');
       } else {
         s1AtpChecked = 'ok';
-        showToast('✓ Stock verified successfully. Delivery Schedule unlocked.', 'success');
+        showToast('✓ Stock verified successfully. Please allocate your delivery schedule.', 'success');
         
         // Auto scroll to schedule card
         setTimeout(() => {
@@ -2375,7 +2375,7 @@
     setTimeout(() => {
       if (loader) loader.classList.add('hide');
       s2AtpChecked = 'ok';
-      showToast('✓ Stock verified successfully. Delivery Schedule unlocked.', 'success');
+      showToast('✓ Stock verified successfully. Please allocate your delivery schedule.', 'success');
       
       setTimeout(() => {
         const cardEl = document.getElementById('s2-sched-card');
@@ -2883,7 +2883,7 @@
       banner.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
           <div>• Stock verified successfully.</div>
-          <div>• Please allocate the remaining units to your delivery slots below.</div>
+          <div>• Please allocate the remaining units to your delivery schedule below.</div>
         </div>
       `;
       screen.insertBefore(banner, custCard);
@@ -3309,7 +3309,7 @@
         showToast('Stock verification failed. See details above.', 'error');
       } else {
         s4AtpChecked = 'ok';
-        showToast('✓ Stock verified successfully. Delivery Schedule unlocked.', 'success');
+        showToast('✓ Stock verified successfully. Please allocate your delivery schedule.', 'success');
 
         setTimeout(() => {
           const cardEl = document.getElementById('s4-sched-card');
