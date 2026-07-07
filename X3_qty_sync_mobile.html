@@ -1533,8 +1533,8 @@
       banner.className = 'm-banner err';
       banner.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
-          <div>• Insufficient stock available for the requested quantity increase.</div>
-          <div>• Please adjust your cart quantity.</div>
+          <div>• Requested quantity exceeds available stock.</div>
+          <div>• Please reduce your cart quantity.</div>
         </div>
       `;
       screen.insertBefore(banner, custCard);
@@ -1859,7 +1859,7 @@
         s1AtpChecked = 'fail';
         document.getElementById('s1-sched-card').classList.add('pulse-error');
         setTimeout(() => document.getElementById('s1-sched-card').classList.remove('pulse-error'), 500);
-        showToast('Stock verification failed. See details above.', 'error');
+        showToast('Not enough stock available for the increased quantity.', 'error');
       } else {
         s1AtpChecked = 'ok';
         showToast('✓ Stock verified successfully. Please allocate your delivery schedule.', 'success');
@@ -1909,7 +1909,7 @@
           s1TempSched[idx] = s1Sched[idx];
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Stock verification failed. See details above.', 'error');
+          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s1AtpFailed = false;
           s1AtpChecked = 'ok';
@@ -1952,7 +1952,7 @@
           s1TempSched[idx] = s1SugarSched[idx];
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Stock verification failed. See details above.', 'error');
+          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s1AtpFailed = false;
           s1AtpChecked = 'ok';
@@ -2712,7 +2712,7 @@
           s3ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Stock verification failed. See details above.', 'error');
+          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s3AtpFailed = false;
           s3Sched[idx] = s3TempSched[idx];
@@ -2760,7 +2760,7 @@
           s3ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Stock verification failed. See details above.', 'error');
+          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s3AtpFailed = false;
           s3SugarSched[idx] = s3SugarTempSched[idx];
@@ -2872,8 +2872,8 @@
       banner.className = 'm-banner err';
       banner.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
-          <div>• Insufficient stock available for the requested quantity increase.</div>
-          <div>• Please adjust your cart quantity.</div>
+          <div>• Requested quantity exceeds available stock.</div>
+          <div>• Please reduce your cart quantity.</div>
         </div>
       `;
       screen.insertBefore(banner, custCard);
@@ -3306,7 +3306,7 @@
         s4AtpChecked = 'fail';
         document.querySelector('.mobile-viewport').classList.add('pulse-error');
         setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-        showToast('Stock verification failed. See details above.', 'error');
+        showToast('Not enough stock available for the increased quantity.', 'error');
       } else {
         s4AtpChecked = 'ok';
         showToast('✓ Stock verified successfully. Please allocate your delivery schedule.', 'success');
@@ -3359,7 +3359,7 @@
           s4ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Stock verification failed. See details above.', 'error');
+          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s4AtpFailed = false;
           s4Sched[idx] = s4TempSched[idx];
@@ -3408,7 +3408,7 @@
           s4ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Stock verification failed. See details above.', 'error');
+          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s4AtpFailed = false;
           s4SugarSched[idx] = s4SugarTempSched[idx];
