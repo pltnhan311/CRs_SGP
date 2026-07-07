@@ -2749,8 +2749,8 @@
         <div class="m-modal-card">
           <div class="m-modal-title" style="color: var(--mobile-text-danger); font-weight: 700;">⚠ Insufficient Stock</div>
           <div class="m-modal-desc">
-            There is insufficient stock for the additional <strong>${s3ErrorDelta}</strong> units of ${s3ErrorProductType === 'oil' ? 'Olive Oil' : 'Sugar'}.<br><br>
-            Please revert the slot allocation or choose a different quantity.
+            Insufficient stock for the additional <strong>${s3ErrorDelta} ${s3ErrorProductType === 'oil' ? 'BOX' : 'CS'}</strong> of ${s3ErrorProductType === 'oil' ? 'Olive Oil' : 'Sugar Bag'}.<br><br>
+            Please adjust slot or revert change.
           </div>
           <div class="m-modal-actions">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -2794,7 +2794,6 @@
           s3ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s3AtpFailed = false;
           s3Sched[idx] = s3TempSched[idx];
@@ -2842,7 +2841,6 @@
           s3ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s3AtpFailed = false;
           s3SugarSched[idx] = s3SugarTempSched[idx];
@@ -3259,8 +3257,8 @@
         <div class="m-modal-card">
           <div class="m-modal-title" style="color: var(--mobile-text-danger); font-weight: 700;">⚠ Insufficient Stock</div>
           <div class="m-modal-desc">
-            There is insufficient stock for the additional <strong>${s4ErrorDelta}</strong> units of ${s4ErrorProductType === 'oil' ? 'Olive Oil' : 'Sugar'}.<br><br>
-            Please revert the slot allocation or choose a different quantity.
+            Insufficient stock for the additional <strong>${s4ErrorDelta} ${s4ErrorProductType === 'oil' ? 'BOX' : 'CS'}</strong> of ${s4ErrorProductType === 'oil' ? 'Olive Oil' : 'Sugar Bag'}.<br><br>
+            Please adjust slot or revert change.
           </div>
           <div class="m-modal-actions">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -3484,7 +3482,6 @@
           s4ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s4AtpFailed = false;
           s4Sched[idx] = s4TempSched[idx];
@@ -3533,7 +3530,6 @@
           s4ErrorModalShown = true;
           document.querySelector('.mobile-viewport').classList.add('pulse-error');
           setTimeout(() => document.querySelector('.mobile-viewport').classList.remove('pulse-error'), 500);
-          showToast('Not enough stock available for the increased quantity.', 'error');
         } else {
           s4AtpFailed = false;
           s4SugarSched[idx] = s4SugarTempSched[idx];
