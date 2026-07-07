@@ -38,6 +38,10 @@
       --mobile-text-danger: #dc2626;
       --mobile-border-danger: #fca5a5;
 
+      --mobile-bg-info: #f0f9ff;
+      --mobile-text-info: #0284c7;
+      --mobile-border-info: #bae6fd;
+
       --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
       --shadow-mobile: 0 8px 30px rgba(0, 0, 0, 0.08);
     }
@@ -465,6 +469,12 @@
       background: var(--mobile-bg-success);
       color: var(--mobile-text-success);
       border-color: var(--mobile-border-success);
+    }
+
+    .m-banner.info {
+      background: var(--mobile-bg-info);
+      color: var(--mobile-text-info);
+      border-color: var(--mobile-border-info);
     }
 
     /* Floating Toast Notification in Mobile Screen */
@@ -1550,8 +1560,12 @@
       screen.insertBefore(banner, custCard);
     } else if (s1AtpChecked !== 'ok' && s1AtpChecked !== 'fail') {
       const banner = document.createElement('div');
-      banner.className = 'm-banner warn';
-      banner.innerHTML = '⚠ Please click <strong>"+ Add Delivery"</strong> to run stock verification.';
+      banner.className = 'm-banner info';
+      banner.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+          <div>• Please check stock availability.</div>
+        </div>
+      `;
       screen.insertBefore(banner, custCard);
     }
 
@@ -2067,8 +2081,12 @@
 
     if (s2AtpChecked !== 'ok' && s2AtpChecked !== 'fail') {
       const banner = document.createElement('div');
-      banner.className = 'm-banner warn';
-      banner.innerHTML = '⚠ Please click <strong>"+ Add Delivery"</strong> to run stock verification.';
+      banner.className = 'm-banner info';
+      banner.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+          <div>• Please check stock availability.</div>
+        </div>
+      `;
       screen.insertBefore(banner, custCard);
     }
 
@@ -2953,8 +2971,12 @@
       screen.insertBefore(banner, custCard);
     } else if (s4AtpChecked !== 'ok' && s4AtpChecked !== 'fail') {
       const banner = document.createElement('div');
-      banner.className = 'm-banner warn';
-      banner.innerHTML = '⚠ Please click <strong>"+ Add Delivery"</strong> to run stock verification.';
+      banner.className = 'm-banner info';
+      banner.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+          <div>• Please check stock availability.</div>
+        </div>
+      `;
       screen.insertBefore(banner, custCard);
     }
 
