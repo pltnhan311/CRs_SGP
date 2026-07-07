@@ -2223,12 +2223,12 @@
     if (s2ConfirmModalShown) {
       const overlay = document.createElement('div');
       overlay.className = 'm-modal-overlay';
-      let title = 'Reduce Cart Quantity';
+      let title = 'Reduce Cart Quantity?';
       let desc = '';
       if (s2ProposedProductType === 'oil') {
-        desc = `You are reducing the cart quantity of Olive Oil to <strong>${s2ProposedCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+        desc = `Reducing Olive Oil to <strong>${s2ProposedCart} BOX</strong> exceeds your delivery schedule. Please adjust slots afterward.`;
       } else {
-        desc = `You are reducing the cart quantity of Sugar to <strong>${s2ProposedSugarCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+        desc = `Reducing Sugar to <strong>${s2ProposedSugarCart} CS</strong> exceeds your delivery schedule. Please adjust slots afterward.`;
       }
       overlay.innerHTML = `
         <div class="m-modal-card">
@@ -3101,12 +3101,12 @@
     if (s4ConfirmModalShown) {
       const overlay = document.createElement('div');
       overlay.className = 'm-modal-overlay';
-      let title = 'Reduce Cart Quantity';
+      let title = 'Reduce Cart Quantity?';
       let desc = '';
       if (s4ProposedProductType === 'oil') {
-        desc = `You are reducing the cart quantity of Olive Oil to <strong>${s4ProposedCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+        desc = `Reducing Olive Oil to <strong>${s4ProposedCart} BOX</strong> exceeds your delivery schedule. Please adjust slots afterward.`;
       } else {
-        desc = `You are reducing the cart quantity of Sugar to <strong>${s4ProposedSugarCart}</strong>.<br><br>Please manually adjust your delivery schedule slots to align with this new total.`;
+        desc = `Reducing Sugar to <strong>${s4ProposedSugarCart} CS</strong> exceeds your delivery schedule. Please adjust slots afterward.`;
       }
       overlay.innerHTML = `
         <div class="m-modal-card">
